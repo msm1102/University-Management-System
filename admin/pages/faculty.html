@@ -21,264 +21,218 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.m
 
 <div class="d-flex">
 
-<!-- Sidebar -->
+    <!-- Sidebar -->
 
-<div class="sidebar">
+    <div class="sidebar">
 
-<h3 class="text-center text-white mt-3">
-UMS Admin
-</h3>
+        <h3 class="text-center text-white mt-3">
+            UMS Admin
+        </h3>
 
-<ul class="nav flex-column mt-4">
+        <ul class="nav flex-column mt-4">
 
-<li class="nav-item">
-<a href="../dashboard.html" class="nav-link">
-<i class="bi bi-house-door"></i>
-Dashboard
-</a>
-</li>
+            <li class="nav-item">
+                <a href="../dashboard.html" class="nav-link">
+                    <i class="bi bi-house-door"></i>
+                    Dashboard
+                </a>
+            </li>
 
-<li class="nav-item">
-<a href="course-schedule.html" class="nav-link">
-<i class="bi bi-calendar-event"></i>
-Course Schedule
-</a>
-</li>
+            <li class="nav-item">
+                <a href="course-schedule.html" class="nav-link">
+                    <i class="bi bi-calendar-event"></i>
+                    Course Schedule
+                </a>
+            </li>
 
-<li class="nav-item">
-<a href="fee-transactions.html" class="nav-link">
-<i class="bi bi-cash-stack"></i>
-Fee Transactions
-</a>
-</li>
+            <li class="nav-item">
+                <a href="fee-transactions.html" class="nav-link">
+                    <i class="bi bi-cash-stack"></i>
+                    Fee Transactions
+                </a>
+            </li>
 
-<li class="nav-item">
-<a href="publish-grades.html" class="nav-link">
-<i class="bi bi-journal-check"></i>
-Publish Grades
-</a>
-</li>
+            <li class="nav-item">
+                <a href="publish-grades.html" class="nav-link">
+                    <i class="bi bi-journal-check"></i>
+                    Publish Grades
+                </a>
+            </li>
 
-<li class="nav-item">
-<a href="students.html" class="nav-link">
-<i class="bi bi-people"></i>
-Students
-</a>
-</li>
+            <li class="nav-item">
+                <a href="students.html" class="nav-link">
+                    <i class="bi bi-people"></i>
+                    Students
+                </a>
+            </li>
 
-<li class="nav-item">
-<a href="faculty.html" class="nav-link active">
-<i class="bi bi-person-workspace"></i>
-Faculty
-</a>
-</li>
+            <li class="nav-item">
+                <a href="faculty.html" class="nav-link active">
+                    <i class="bi bi-person-workspace"></i>
+                    Faculty
+                </a>
+            </li>
 
-</ul>
+        </ul>
 
-</div>
+    </div>
 
-<!-- Main Content -->
+    <!-- Main Content -->
 
-<div class="main-content">
+    <div class="main-content">
 
-<nav class="navbar bg-white shadow-sm px-4">
+        <nav class="navbar bg-white shadow-sm px-4">
 
-<h4>Faculty Management</h4>
+            <h4>Faculty Management</h4>
 
-</nav>
+        </nav>
 
-<div class="container mt-4">
+        <div class="container mt-4">
 
-<!-- Add Faculty -->
+            <!-- Add Faculty -->
 
-<div class="card shadow">
+            <div class="card shadow">
 
-<div class="card-header bg-primary text-white">
+                <div class="card-header bg-primary text-white">
 
-Add Faculty
+                    Add Faculty
 
-</div>
+                </div>
 
-<div class="card-body">
+                <div class="card-body">
 
-<form>
+                    <form id="facultyForm">
 
-<div class="row">
+                        <div class="row">
 
-<div class="col-md-6 mb-3">
-<label>Faculty ID</label>
-<input type="text" class="form-control">
-</div>
+                            <div class="col-md-6 mb-3">
+                                <label>Faculty ID</label>
+                                <input type="text" id="facultyId" class="form-control">
+                            </div>
 
-<div class="col-md-6 mb-3">
-<label>Faculty Name</label>
-<input type="text" class="form-control">
-</div>
+                            <div class="col-md-6 mb-3">
+                                <label>Faculty Name</label>
+                                <input type="text" id="facultyName" class="form-control">
+                            </div>
 
-<div class="col-md-6 mb-3">
-<label>Email</label>
-<input type="email" class="form-control">
-</div>
+                            <div class="col-md-6 mb-3">
+                                <label>Email</label>
+                                <input type="email" id="facultyEmail" class="form-control">
+                            </div>
 
-<div class="col-md-6 mb-3">
-<label>Phone</label>
-<input type="text" class="form-control">
-</div>
+                            <div class="col-md-6 mb-3">
+                                <label>Phone</label>
+                                <input type="text" id="facultyPhone" class="form-control">
+                            </div>
 
-<div class="col-md-6 mb-3">
-<label>Department</label>
-<select class="form-select">
-<option>CSE</option>
-<option>EEE</option>
-<option>BBA</option>
-<option>English</option>
-</select>
-</div>
+                            <div class="col-md-6 mb-3">
+                                <label>Department</label>
 
-<div class="col-md-6 mb-3">
-<label>Designation</label>
-<select class="form-select">
-<option>Lecturer</option>
-<option>Assistant Professor</option>
-<option>Associate Professor</option>
-<option>Professor</option>
-</select>
-</div>
+                                <select id="facultyDepartment" class="form-select">
 
-</div>
+                                    <option>CSE</option>
+                                    <option>EEE</option>
+                                    <option>BBA</option>
+                                    <option>English</option>
 
-<button class="btn btn-success">
-<i class="bi bi-person-plus-fill"></i>
-Add Faculty
-</button>
+                                </select>
 
-</form>
+                            </div>
 
-</div>
+                            <div class="col-md-6 mb-3">
 
-</div>
+                                <label>Designation</label>
 
-<!-- Search -->
+                                <select id="facultyDesignation" class="form-select">
 
-<div class="card shadow mt-4">
+                                    <option>Lecturer</option>
+                                    <option>Assistant Professor</option>
+                                    <option>Associate Professor</option>
+                                    <option>Professor</option>
 
-<div class="card-body">
+                                </select>
 
-<div class="row">
+                            </div>
 
-<div class="col-md-10">
-<input type="text" class="form-control" placeholder="Search Faculty">
-</div>
+                        </div>
 
-<div class="col-md-2">
-<button class="btn btn-primary w-100">
+                        <button
+                            type="button"
+                            class="btn btn-success"
+                            onclick="addFaculty()">
+
+                            <i class="bi bi-person-plus-fill"></i>
+                            Add Faculty
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <!-- Search Faculty -->
+             <button
+type="button"
+class="btn btn-primary w-100"
+onclick="searchFaculty()">
 Search
 </button>
-</div>
+<input
+type="text"
+id="facultySearch"
+class="form-control"
+placeholder="Search Faculty">
+
+            
+
+            <!-- Faculty List -->
+
+            <div class="card shadow mt-4">
+
+                <div class="card-header bg-dark text-white">
+
+                    Faculty List
+
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-bordered table-hover">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Designation</th>
+                                <th>Email</th>
+                                <th>Action</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="facultyTableBody">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
-</div>
-
-</div>
-
-<!-- Faculty Table -->
-
-<div class="card shadow mt-4">
-
-<div class="card-header bg-dark text-white">
-
-Faculty List
-
-</div>
-
-<div class="card-body">
-
-<table class="table table-bordered table-hover">
-
-<thead>
-
-<tr>
-
-<th>ID</th>
-<th>Name</th>
-<th>Department</th>
-<th>Designation</th>
-<th>Email</th>
-<th>Action</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>F101</td>
-<td>Dr. Rahman</td>
-<td>CSE</td>
-<td>Professor</td>
-<td>rahman@gmail.com</td>
-
-<td>
-
-<button class="btn btn-info btn-sm">
-<i class="bi bi-eye"></i>
-</button>
-
-<button class="btn btn-warning btn-sm">
-<i class="bi bi-pencil"></i>
-</button>
-
-<button class="btn btn-danger btn-sm">
-<i class="bi bi-trash"></i>
-</button>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td>F102</td>
-<td>Mr. Karim</td>
-<td>EEE</td>
-<td>Lecturer</td>
-<td>karim@gmail.com</td>
-
-<td>
-
-<button class="btn btn-info btn-sm">
-<i class="bi bi-eye"></i>
-</button>
-
-<button class="btn btn-warning btn-sm">
-<i class="bi bi-pencil"></i>
-</button>
-
-<button class="btn btn-danger btn-sm">
-<i class="bi bi-trash"></i>
-</button>
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
+<script src="../js/script.js"></script>
 
 </body>
-
 </html>
