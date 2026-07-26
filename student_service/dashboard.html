@@ -4,54 +4,124 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
+
     <link rel="stylesheet" href="dashboard.css">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 </head>
 <body>
 
-    <div class="sidebar">
-        <h2>NUB Portal</h2>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="profile.html">Profile</a>
-        <a href="courses.html">Courses</a>
-        <a href="results.html">Results</a>
-        <a href="notices.html">Notices</a>
-        <a href="routine.html">Routine</a>
-        <a href="login.html">Logout</a>
+<div class="sidebar">
+
+    <h2>NUB Portal</h2>
+
+    <a href="dashboard.html">
+        <i class="fa-solid fa-house"></i> Dashboard
+    </a>
+
+    <a href="profile.html">
+        <i class="fa-solid fa-user"></i> My Profile
+    </a>
+
+    <a href="courses.html">
+        <i class="fa-solid fa-book"></i> My Courses
+    </a>
+
+    <a href="results.html">
+        <i class="fa-solid fa-chart-column"></i> Results
+    </a>
+
+    <a href="routine.html">
+        <i class="fa-solid fa-calendar-days"></i> Routine
+    </a>
+
+    <a href="notices.html">
+        <i class="fa-solid fa-bullhorn"></i> Notices
+    </a>
+
+    <a href="fee_payment.html">
+        <i class="fa-solid fa-money-bill-wave"></i> Fee Payment
+    </a>
+
+    <a href="settings.html">
+        <i class="fa-solid fa-gear"></i> Settings
+    </a>
+
+    <a href="change_password.html">
+        <i class="fa-solid fa-key"></i> Change Password
+    </a>
+
+    <a href="help.html">
+        <i class="fa-solid fa-circle-question"></i> Help & Support
+    </a>
+
+    <a href="login.html">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </a>
+
+</div>
+
+<div class="main">
+
+    <div class="header">
+
+        <h1>Welcome, Sakib Khan Rony</h1>
+
+        <p>
+            Northern University Bangladesh<br>
+            Student Service Portal
+        </p>
+
     </div>
 
-    <div class="main">
-        <div class="header">
-            <h1>Welcome, Sakib</h1>
-            <p>Northern University Bangladesh Student Service</p>
+    <div class="cards">
+
+        <div class="card">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <h3>Current Semester</h3>
+            <p>7th Semester</p>
         </div>
 
-        <div class="cards">
-            <div class="card">
-                <h3>Current Semester</h3>
-                <p>7th Semester</p>
-            </div>
-
-            <div class="card">
-                <h3>Enrolled Courses</h3>
-                <p>5 Courses</p>
-            </div>
-
-            <div class="card">
-                <h3>CGPA</h3>
-                <p>3.45</p>
-            </div>
-
-            <div class="card">
-                <h3>Pending Fees</h3>
-                <p>0 BDT</p>
-            </div>
+        <div class="card">
+            <i class="fa-solid fa-book-open"></i>
+            <h3>Enrolled Courses</h3>
+            <p>5 Courses</p>
         </div>
 
-        <div class="notice">
-            <h2>Latest Notice</h2>
-            <p>Final exam routine has been published. Please check the routine section.</p>
+        <div class="card">
+            <i class="fa-solid fa-chart-line"></i>
+            <h3>CGPA</h3>
+            <p>3.45</p>
         </div>
+
+        <div class="card">
+            <i class="fa-solid fa-wallet"></i>
+            <h3>Pending Fees</h3>
+            <p>0 BDT</p>
+        </div>
+
     </div>
+
+    <div class="notice">
+
+        <h2>
+            <i class="fa-solid fa-bullhorn"></i>
+            Latest Notice
+        </h2>
+
+        <p>
+            Final Examination Routine has been published.
+            Please visit the <strong>Routine</strong> section for details.
+        </p>
+
+    </div>
+
+</div>
 
 </body>
 </html>
