@@ -15,18 +15,17 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
-
 </head>
 
 <body>
 
 <div class="d-flex">
 
-    <!-- Sidebar Start -->
+    <!-- Sidebar -->
 
     <div class="sidebar">
 
-        <h3 class="text-center text-white mb-4">
+        <h3 class="text-center text-white mb-4 mt-3">
             UMS Admin
         </h3>
 
@@ -75,7 +74,9 @@
             </li>
 
             <li class="nav-item mt-5">
-                <a href="index.html" class="nav-link text-danger">
+                <a href="#"
+                   class="nav-link text-danger"
+                   onclick="logout()">
                     <i class="bi bi-box-arrow-right"></i>
                     Logout
                 </a>
@@ -84,10 +85,6 @@
         </ul>
 
     </div>
-
-    <!-- Sidebar End -->
-
-
 
     <!-- Main Content -->
 
@@ -99,20 +96,28 @@
 
             <h4>Admin Dashboard</h4>
 
-            <span class="fw-bold">
+            <div>
+                <span class="me-3 fw-bold text-primary" id="clock"></span>
+
+                <span
+                class="fw-bold"
+                id="welcomeAdmin">
+
                 Welcome Admin
-            </span>
+
+                </span>
+
+            </div>
 
         </nav>
 
-
-        <!-- Cards -->
+        <!-- Dashboard Cards -->
 
         <div class="container-fluid mt-4">
 
             <div class="row">
 
-                <div class="col-md-3">
+                <div class="col-md-3 mb-3">
 
                     <div class="card shadow">
 
@@ -120,7 +125,9 @@
 
                             <h5>Total Students</h5>
 
-                            <h2>1250</h2>
+                            <h2 id="totalStudents">
+                                0
+                            </h2>
 
                         </div>
 
@@ -128,7 +135,7 @@
 
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-3 mb-3">
 
                     <div class="card shadow">
 
@@ -136,7 +143,9 @@
 
                             <h5>Total Faculty</h5>
 
-                            <h2>75</h2>
+                            <h2 id="totalFaculty">
+                                0
+                            </h2>
 
                         </div>
 
@@ -144,7 +153,7 @@
 
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-3 mb-3">
 
                     <div class="card shadow">
 
@@ -152,7 +161,9 @@
 
                             <h5>Total Courses</h5>
 
-                            <h2>120</h2>
+                            <h2 id="totalCourses">
+                                0
+                            </h2>
 
                         </div>
 
@@ -160,7 +171,7 @@
 
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-3 mb-3">
 
                     <div class="card shadow">
 
@@ -168,7 +179,9 @@
 
                             <h5>Pending Fees</h5>
 
-                            <h2>40</h2>
+                            <h2 id="pendingFees">
+                                0
+                            </h2>
 
                         </div>
 
@@ -178,12 +191,11 @@
 
             </div>
 
+            <!-- Recent Activities -->
 
-            <!-- Recent Activity -->
+            <div class="card mt-4 shadow">
 
-            <div class="card mt-5 shadow">
-
-                <div class="card-header">
+                <div class="card-header bg-primary text-white">
 
                     Recent Activities
 
@@ -191,16 +203,14 @@
 
                 <div class="card-body">
 
-                    <table class="table table-bordered">
+                    <table class="table table-bordered table-hover">
 
                         <thead>
 
                             <tr>
 
                                 <th>Date</th>
-
                                 <th>Activity</th>
-
                                 <th>Status</th>
 
                             </tr>
@@ -213,9 +223,19 @@
 
                                 <td>30-06-2026</td>
 
-                                <td>Course Schedule Updated</td>
+                                <td>
+                                    Course Schedule Updated
+                                </td>
 
-                                <td>Completed</td>
+                                <td>
+
+                                    <span class="badge bg-success">
+
+                                        Completed
+
+                                    </span>
+
+                                </td>
 
                             </tr>
 
@@ -223,9 +243,19 @@
 
                                 <td>30-06-2026</td>
 
-                                <td>Semester Grade Published</td>
+                                <td>
+                                    Semester Grade Published
+                                </td>
 
-                                <td>Completed</td>
+                                <td>
+
+                                    <span class="badge bg-success">
+
+                                        Completed
+
+                                    </span>
+
+                                </td>
 
                             </tr>
 
@@ -233,9 +263,19 @@
 
                                 <td>30-06-2026</td>
 
-                                <td>Fee Approved</td>
+                                <td>
+                                    Fee Approved
+                                </td>
 
-                                <td>Pending</td>
+                                <td>
+
+                                    <span class="badge bg-warning text-dark">
+
+                                        Pending
+
+                                    </span>
+
+                                </td>
 
                             </tr>
 
@@ -252,6 +292,10 @@
     </div>
 
 </div>
+
+<!-- JavaScript -->
+
+<script src="js/script.js"></script>
 
 </body>
 
