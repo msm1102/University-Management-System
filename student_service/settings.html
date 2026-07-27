@@ -1,71 +1,64 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Account Settings</title>
 
-    <link rel="stylesheet" href="settings.css">
+    <link rel="stylesheet" href="settings.css" />
 
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-</head>
-<body>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Account Settings</h1>
 
-<div class="container">
+        <a href="dashboard.php" class="back-btn">
+          <i class="fa-solid fa-arrow-left"></i> Dashboard
+        </a>
+      </div>
 
-<div class="header">
+      <form>
+        <div class="card">
+          <h2>Contact Information</h2>
 
-<h1>Account Settings</h1>
+          <label>Mobile Number</label>
+          <input type="text" value="017XXXXXXXX" />
 
-<a href="dashboard.html" class="back-btn">
-<i class="fa-solid fa-arrow-left"></i> Dashboard
-</a>
+          <label>Email Address</label>
+          <input type="email" value="sakib@example.com" />
 
-</div>
+          <label>Present Address</label>
+          <textarea rows="3">Dhaka, Bangladesh</textarea>
 
-<form>
+          <label>Permanent Address</label>
+          <textarea rows="3">Jessore, Bangladesh</textarea>
 
-<div class="card">
+          <label>Profile Picture</label>
+          <input type="file" />
 
-<h2>Contact Information</h2>
+          <button type="submit">Save Changes</button>
+        </div>
+      </form>
 
-<label>Mobile Number</label>
-<input type="text" value="017XXXXXXXX">
+      <div class="card readonly">
+        <h2>Academic Information (Read Only)</h2>
 
-<label>Email Address</label>
-<input type="email" value="sakib@example.com">
-
-<label>Present Address</label>
-<textarea rows="3">Dhaka, Bangladesh</textarea>
-
-<label>Permanent Address</label>
-<textarea rows="3">Jessore, Bangladesh</textarea>
-
-<label>Profile Picture</label>
-<input type="file">
-
-<button type="submit">Save Changes</button>
-
-</div>
-
-</form>
-
-<div class="card readonly">
-
-<h2>Academic Information (Read Only)</h2>
-
-<p><strong>Student ID:</strong> 221-115-001</p>
-<p><strong>Department:</strong> Computer Science & Engineering</p>
-<p><strong>Semester:</strong> 7th</p>
-<p><strong>Batch:</strong> 57</p>
-<p><strong>CGPA:</strong> 3.80</p>
-
-</div>
-
-</div>
-
-</body>
+        <p><strong>Student ID:</strong> 221-115-001</p>
+        <p><strong>Department:</strong> Computer Science & Engineering</p>
+        <p><strong>Semester:</strong> 7th</p>
+        <p><strong>Batch:</strong> 57</p>
+        <p><strong>CGPA:</strong> 3.80</p>
+      </div>
+    </div>
+  </body>
 </html>

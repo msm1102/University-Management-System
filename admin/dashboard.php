@@ -1,3 +1,52 @@
+<?php
+
+include "db.php";
+
+
+// Total Students
+$student_query = "SELECT COUNT(*) AS total FROM students";
+$student_result = mysqli_query($conn, $student_query);
+
+if($student_result){
+    $student_data = mysqli_fetch_assoc($student_result);
+    $total_students = $student_data['total'];
+}
+else{
+    $total_students = 0;
+}
+
+
+// Total Faculty
+$faculty_query = "SELECT COUNT(*) AS total FROM faculty";
+$faculty_result = mysqli_query($conn, $faculty_query);
+
+if($faculty_result){
+    $faculty_data = mysqli_fetch_assoc($faculty_result);
+    $total_faculty = $faculty_data['total'];
+}
+else{
+    $total_faculty = 0;
+}
+
+
+// Total Courses
+$course_query = "SELECT COUNT(*) AS total FROM courses";
+$course_result = mysqli_query($conn, $course_query);
+
+if($course_result){
+    $course_data = mysqli_fetch_assoc($course_result);
+    $total_courses = $course_data['total'];
+}
+else{
+    $total_courses = 0;
+}
+
+
+// Pending Fees (temporary)
+$pending_fees = 0;
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,7 +81,7 @@
         <ul class="nav flex-column">
 
             <li class="nav-item">
-                <a href="dashboard.html" class="nav-link active">
+                <a href="dashboard.php" class="nav-link active">
                     <i class="bi bi-house-door"></i>
                     Dashboard
                 </a>
@@ -126,7 +175,7 @@
                             <h5>Total Students</h5>
 
                             <h2 id="totalStudents">
-                                0
+                                <?php echo $total_students; ?>
                             </h2>
 
                         </div>
@@ -144,7 +193,7 @@
                             <h5>Total Faculty</h5>
 
                             <h2 id="totalFaculty">
-                                0
+                                <?php echo $total_faculty; ?>
                             </h2>
 
                         </div>
@@ -162,7 +211,7 @@
                             <h5>Total Courses</h5>
 
                             <h2 id="totalCourses">
-                                0
+                                <?php echo $total_courses; ?>
                             </h2>
 
                         </div>
@@ -180,7 +229,7 @@
                             <h5>Pending Fees</h5>
 
                             <h2 id="pendingFees">
-                                0
+                                <?php echo $pending_fees; ?>
                             </h2>
 
                         </div>
