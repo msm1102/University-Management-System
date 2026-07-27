@@ -1,254 +1,204 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
+    <title>Fee Transactions</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
 
-<title>Fee Transactions</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
 
-<link rel="stylesheet"
-href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <body>
+    <div class="d-flex">
+      <!-- Sidebar -->
 
-<link rel="stylesheet" href="../css/style.css">
-
-</head>
-
-<body>
-
-<div class="d-flex">
-
-    <!-- Sidebar -->
-
-    <div class="sidebar">
-
-        <h3 class="text-center text-white mt-3">
-            UMS Admin
-        </h3>
+      <div class="sidebar">
+        <h3 class="text-center text-white mt-3">UMS Admin</h3>
 
         <ul class="nav flex-column mt-4">
+          <li class="nav-item">
+            <a href="../dashboard.php" class="nav-link">
+              <i class="bi bi-house-door"></i>
+              Dashboard
+            </a>
+          </li>
 
-            <li class="nav-item">
-                <a href="../dashboard.html" class="nav-link">
-                    <i class="bi bi-house-door"></i>
-                    Dashboard
-                </a>
-            </li>
+          <li class="nav-item">
+            <a href="course-schedule.html" class="nav-link">
+              <i class="bi bi-calendar-event"></i>
+              Course Schedule
+            </a>
+          </li>
 
-            <li class="nav-item">
-                <a href="course-schedule.html" class="nav-link">
-                    <i class="bi bi-calendar-event"></i>
-                    Course Schedule
-                </a>
-            </li>
+          <li class="nav-item">
+            <a href="fee-transactions.html" class="nav-link active">
+              <i class="bi bi-cash-stack"></i>
+              Fee Transactions
+            </a>
+          </li>
 
-            <li class="nav-item">
-                <a href="fee-transactions.html" class="nav-link active">
-                    <i class="bi bi-cash-stack"></i>
-                    Fee Transactions
-                </a>
-            </li>
+          <li class="nav-item">
+            <a href="publish-grades.html" class="nav-link">
+              <i class="bi bi-journal-check"></i>
+              Publish Grades
+            </a>
+          </li>
 
-            <li class="nav-item">
-                <a href="publish-grades.html" class="nav-link">
-                    <i class="bi bi-journal-check"></i>
-                    Publish Grades
-                </a>
-            </li>
+          <li class="nav-item">
+            <a href="students.html" class="nav-link">
+              <i class="bi bi-people"></i>
+              Students
+            </a>
+          </li>
 
-            <li class="nav-item">
-                <a href="students.html" class="nav-link">
-                    <i class="bi bi-people"></i>
-                    Students
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a href="faculty.html" class="nav-link">
-                    <i class="bi bi-person-workspace"></i>
-                    Faculty
-                </a>
-            </li>
-
+          <li class="nav-item">
+            <a href="faculty.html" class="nav-link">
+              <i class="bi bi-person-workspace"></i>
+              Faculty
+            </a>
+          </li>
         </ul>
+      </div>
 
-    </div>
+      <!-- Main Content -->
 
-    <!-- Main Content -->
-
-    <div class="main-content">
-
+      <div class="main-content">
         <nav class="navbar bg-white shadow-sm px-4">
-
-            <h4>Fee Transactions Management</h4>
-
+          <h4>Fee Transactions Management</h4>
         </nav>
 
         <div class="container mt-4">
+          <!-- Add Fee -->
 
-            <!-- Add Fee -->
-
-            <div class="card shadow mb-4">
-
-                <div class="card-header bg-success text-white">
-
-                    Add Fee Transaction
-
-                </div>
-
-                <div class="card-body">
-
-                    <form id="feeForm">
-
-                        <div class="row">
-
-                            <div class="col-md-2 mb-2">
-                                <input
-                                type="text"
-                                id="feeId"
-                                class="form-control"
-                                placeholder="Student ID">
-                            </div>
-
-                            <div class="col-md-3 mb-2">
-                                <input
-                                type="text"
-                                id="feeName"
-                                class="form-control"
-                                placeholder="Student Name">
-                            </div>
-
-                            <div class="col-md-2 mb-2">
-                                <input
-                                type="text"
-                                id="feeDepartment"
-                                class="form-control"
-                                placeholder="Department">
-                            </div>
-
-                            <div class="col-md-2 mb-2">
-                                <input
-                                type="text"
-                                id="feeSemester"
-                                class="form-control"
-                                placeholder="Semester">
-                            </div>
-
-                            <div class="col-md-2 mb-2">
-                                <input
-                                type="number"
-                                id="feeAmount"
-                                class="form-control"
-                                placeholder="Amount">
-                            </div>
-
-                            <div class="col-md-1 mb-2">
-
-                                <button
-                                type="button"
-                                class="btn btn-success w-100"
-                                onclick="addFee()">
-
-                                Add
-
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </form>
-
-                </div>
-
+          <div class="card shadow mb-4">
+            <div class="card-header bg-success text-white">
+              Add Fee Transaction
             </div>
 
-            <!-- Search -->
+            <div class="card-body">
+              <form id="feeForm">
+                <div class="row">
+                  <div class="col-md-2 mb-2">
+                    <input
+                      type="text"
+                      id="feeId"
+                      class="form-control"
+                      placeholder="Student ID"
+                    />
+                  </div>
 
-            <div class="card shadow mb-4">
+                  <div class="col-md-3 mb-2">
+                    <input
+                      type="text"
+                      id="feeName"
+                      class="form-control"
+                      placeholder="Student Name"
+                    />
+                  </div>
 
-                <div class="card-body">
+                  <div class="col-md-2 mb-2">
+                    <input
+                      type="text"
+                      id="feeDepartment"
+                      class="form-control"
+                      placeholder="Department"
+                    />
+                  </div>
 
-                    <div class="row">
+                  <div class="col-md-2 mb-2">
+                    <input
+                      type="text"
+                      id="feeSemester"
+                      class="form-control"
+                      placeholder="Semester"
+                    />
+                  </div>
 
-                        <div class="col-md-10">
+                  <div class="col-md-2 mb-2">
+                    <input
+                      type="number"
+                      id="feeAmount"
+                      class="form-control"
+                      placeholder="Amount"
+                    />
+                  </div>
 
-                            <input
-                            type="text"
-                            id="feeSearch"
-                            class="form-control"
-                            placeholder="Search Student"
-                            onkeyup="searchFee()">
+                  <div class="col-md-1 mb-2">
+                    <button
+                      type="button"
+                      class="btn btn-success w-100"
+                      onclick="addFee()"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
 
-                        </div>
+          <!-- Search -->
 
-                        <div class="col-md-2">
-
-                            <button
-                            class="btn btn-primary w-100">
-
-                            Search
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
+          <div class="card shadow mb-4">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-10">
+                  <input
+                    type="text"
+                    id="feeSearch"
+                    class="form-control"
+                    placeholder="Search Student"
+                    onkeyup="searchFee()"
+                  />
                 </div>
 
+                <div class="col-md-2">
+                  <button class="btn btn-primary w-100">Search</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fee Table -->
+
+          <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+              Fee Transactions List
             </div>
 
-            <!-- Fee Table -->
+            <div class="card-body">
+              <table class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Student Name</th>
+                    <th>Department</th>
+                    <th>Semester</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
 
-            <div class="card shadow">
-
-                <div class="card-header bg-primary text-white">
-
-                    Fee Transactions List
-
-                </div>
-
-                <div class="card-body">
-
-                    <table class="table table-bordered table-hover">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>ID</th>
-                                <th>Student Name</th>
-                                <th>Department</th>
-                                <th>Semester</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th>Action</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody id="feeTableBody">
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
+                <tbody id="feeTableBody"></tbody>
+              </table>
             </div>
-
+          </div>
         </div>
-
+      </div>
     </div>
 
-</div>
-
-<script src="../js/script.js"></script>
-
-</body>
+    <script src="../js/script.js"></script>
+  </body>
 </html>

@@ -5,45 +5,31 @@ console.log("JS Connected Successfully");
 // ==========================
 
 function updateDashboardCounts() {
+  let students = JSON.parse(localStorage.getItem("students")) || [];
 
-    let students =
-        JSON.parse(localStorage.getItem("students")) || [];
+  let faculties = JSON.parse(localStorage.getItem("faculties")) || [];
 
-    let faculties =
-        JSON.parse(localStorage.getItem("faculties")) || [];
+  let courses = JSON.parse(localStorage.getItem("courses")) || [];
 
-    let courses =
-        JSON.parse(localStorage.getItem("courses")) || [];
+  let fees = JSON.parse(localStorage.getItem("fees")) || [];
 
-    let fees =
-        JSON.parse(localStorage.getItem("fees")) || [];
+  let pendingFees = fees.filter((fee) => fee.status === "Pending");
 
-    let pendingFees =
-        fees.filter(fee => fee.status === "Pending");
+  let studentCard = document.getElementById("totalStudents");
 
-    let studentCard =
-        document.getElementById("totalStudents");
+  let facultyCard = document.getElementById("totalFaculty");
 
-    let facultyCard =
-        document.getElementById("totalFaculty");
+  let courseCard = document.getElementById("totalCourses");
 
-    let courseCard =
-        document.getElementById("totalCourses");
+  let feeCard = document.getElementById("pendingFees");
 
-    let feeCard =
-        document.getElementById("pendingFees");
+  if (studentCard) studentCard.innerHTML = students.length;
 
-    if (studentCard)
-        studentCard.innerHTML = students.length;
+  if (facultyCard) facultyCard.innerHTML = faculties.length;
 
-    if (facultyCard)
-        facultyCard.innerHTML = faculties.length;
+  if (courseCard) courseCard.innerHTML = courses.length;
 
-    if (courseCard)
-        courseCard.innerHTML = courses.length;
-
-    if (feeCard)
-        feeCard.innerHTML = pendingFees.length;
+  if (feeCard) feeCard.innerHTML = pendingFees.length;
 }
 
 // ==========================
@@ -51,16 +37,13 @@ function updateDashboardCounts() {
 // ==========================
 
 function updateClock() {
+  let clock = document.getElementById("clock");
 
-    let clock =
-        document.getElementById("clock");
+  if (!clock) return;
 
-    if (!clock) return;
+  let now = new Date();
 
-    let now = new Date();
-
-    clock.innerHTML =
-        now.toLocaleTimeString();
+  clock.innerHTML = now.toLocaleTimeString();
 }
 
 setInterval(updateClock, 1000);
@@ -70,100 +53,68 @@ setInterval(updateClock, 1000);
 // ==========================
 
 function addStudent() {
+  let id = document.getElementById("studentId").value;
 
-    let id =
-        document.getElementById("studentId").value;
+  let name = document.getElementById("studentName").value;
 
-    let name =
-        document.getElementById("studentName").value;
+  let email = document.getElementById("studentEmail").value;
 
-    let email =
-        document.getElementById("studentEmail").value;
+  let phone = document.getElementById("studentPhone").value;
 
-    let phone =
-        document.getElementById("studentPhone").value;
+  let department = document.getElementById("studentDepartment").value;
 
-    let department =
-        document.getElementById("studentDepartment").value;
+  let semester = document.getElementById("studentSemester").value;
 
-    let semester =
-        document.getElementById("studentSemester").value;
+  if (id === "" || name === "" || email === "") {
+    alert("Please fill all fields");
+    return;
+  }
 
-    if (id === "" || name === "" || email === "") {
+  let students = JSON.parse(localStorage.getItem("students")) || [];
 
-        alert("Please fill all fields");
-        return;
-    }
+  let editIndex = localStorage.getItem("studentEditIndex");
 
-    let students =
-        JSON.parse(localStorage.getItem("students"))
-        || [];
+  let student = {
+    id,
+    name,
+    email,
+    phone,
+    department,
+    semester,
+  };
 
-    let editIndex =
-        localStorage.getItem("studentEditIndex");
+  if (editIndex !== null) {
+    students[editIndex] = student;
 
-    let student = {
+    localStorage.removeItem("studentEditIndex");
 
-        id,
-        name,
-        email,
-        phone,
-        department,
-        semester
+    alert("Student Updated");
+  } else {
+    students.push(student);
 
-    };
+    alert("Student Added");
+  }
 
-    if (editIndex !== null) {
+  localStorage.setItem("students", JSON.stringify(students));
 
-        students[editIndex] = student;
+  displayStudents();
 
-        localStorage.removeItem(
-            "studentEditIndex"
-        );
+  updateDashboardCounts();
 
-        alert("Student Updated");
-
-    } else {
-
-        students.push(student);
-
-        alert("Student Added");
-
-    }
-
-    localStorage.setItem(
-        "students",
-        JSON.stringify(students)
-    );
-
-    displayStudents();
-
-    updateDashboardCounts();
-
-    document
-        .getElementById("studentForm")
-        .reset();
+  document.getElementById("studentForm").reset();
 }
 
 function displayStudents() {
+  let table = document.getElementById("studentTableBody");
 
-    let table =
-        document.getElementById(
-            "studentTableBody"
-        );
+  if (!table) return;
 
-    if (!table) return;
+  let students = JSON.parse(localStorage.getItem("students")) || [];
 
-    let students =
-        JSON.parse(
-            localStorage.getItem("students")
-        ) || [];
+  table.innerHTML = "";
 
-    table.innerHTML = "";
-
-    students.forEach(function (student, index) {
-
-        table.innerHTML += `
+  students.forEach(function (student, index) {
+    table.innerHTML += `
 
         <tr>
 
@@ -196,63 +147,41 @@ function displayStudents() {
         </tr>
 
         `;
-    });
+  });
 }
 
 function editStudent(index) {
+  let students = JSON.parse(localStorage.getItem("students")) || [];
 
-    let students =
-        JSON.parse(
-            localStorage.getItem("students")
-        ) || [];
+  let student = students[index];
 
-    let student =
-        students[index];
+  document.getElementById("studentId").value = student.id;
 
-    document.getElementById("studentId").value =
-        student.id;
+  document.getElementById("studentName").value = student.name;
 
-    document.getElementById("studentName").value =
-        student.name;
+  document.getElementById("studentEmail").value = student.email;
 
-    document.getElementById("studentEmail").value =
-        student.email;
+  document.getElementById("studentPhone").value = student.phone;
 
-    document.getElementById("studentPhone").value =
-        student.phone;
+  document.getElementById("studentDepartment").value = student.department;
 
-    document.getElementById("studentDepartment").value =
-        student.department;
+  document.getElementById("studentSemester").value = student.semester;
 
-    document.getElementById("studentSemester").value =
-        student.semester;
-
-    localStorage.setItem(
-        "studentEditIndex",
-        index
-    );
+  localStorage.setItem("studentEditIndex", index);
 }
 
 function deleteStudent(index) {
+  if (confirm("Delete Student?")) {
+    let students = JSON.parse(localStorage.getItem("students")) || [];
 
-    if (confirm("Delete Student?")) {
+    students.splice(index, 1);
 
-        let students =
-            JSON.parse(
-                localStorage.getItem("students")
-            ) || [];
+    localStorage.setItem("students", JSON.stringify(students));
 
-        students.splice(index, 1);
+    displayStudents();
 
-        localStorage.setItem(
-            "students",
-            JSON.stringify(students)
-        );
-
-        displayStudents();
-
-        updateDashboardCounts();
-    }
+    updateDashboardCounts();
+  }
 }
 
 // ==========================
@@ -260,192 +189,113 @@ function deleteStudent(index) {
 // ==========================
 
 function addFaculty() {
+  let faculty_id = document.getElementById("facultyId").value;
+  let name = document.getElementById("facultyName").value;
+  let email = document.getElementById("facultyEmail").value;
+  let phone = document.getElementById("facultyPhone").value;
+  let department = document.getElementById("facultyDepartment").value;
+  let designation = document.getElementById("facultyDesignation").value;
 
-    let id =
-        document.getElementById("facultyId").value;
+  if (faculty_id == "" || name == "" || email == "") {
+    alert("Please fill all fields");
+    return;
+  }
 
-    let name =
-        document.getElementById("facultyName").value;
+  fetch("../save_faculty.php", {
+    method: "POST",
 
-    let email =
-        document.getElementById("facultyEmail").value;
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
 
-    let phone =
-        document.getElementById("facultyPhone").value;
+    body:
+      "faculty_id=" +
+      encodeURIComponent(faculty_id) +
+      "&name=" +
+      encodeURIComponent(name) +
+      "&email=" +
+      encodeURIComponent(email) +
+      "&phone=" +
+      encodeURIComponent(phone) +
+      "&department=" +
+      encodeURIComponent(department) +
+      "&designation=" +
+      encodeURIComponent(designation),
+  })
+    .then((res) => res.text())
+    .then((data) => {
+      alert(data);
 
-    let department =
-        document.getElementById("facultyDepartment").value;
+      document.getElementById("facultyForm").reset();
+      displayFaculties();
+    })
+    .catch((err) => console.log(err));
+}
+function displayFaculties() {
+  let table = document.getElementById("facultyTableBody");
 
-    let designation =
-        document.getElementById("facultyDesignation").value;
+  if (!table) return;
 
-    if (id === "" || name === "" || email === "") {
+  fetch("../get_faculties.php")
+    .then((response) => response.json())
+    .then((faculties) => {
+      table.innerHTML = "";
 
-        alert("Please fill all fields");
-        return;
-    }
+      faculties.forEach(function (faculty) {
+        table.innerHTML += `
+                <tr>
+                    <td>${faculty.faculty_id}</td>
+                    <td>${faculty.name}</td>
+                    <td>${faculty.department}</td>
+                    <td>${faculty.designation}</td>
+                    <td>${faculty.email}</td>
 
-    let faculties =
-        JSON.parse(
-            localStorage.getItem("faculties")
-        ) || [];
+                    <td>
+                        <button class="btn btn-warning btn-sm">
+                            Edit
+                        </button>
 
-    let editIndex =
-        localStorage.getItem(
-            "facultyEditIndex"
-        );
+                        <button class="btn btn-danger btn-sm">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+      });
+    });
+}
+function editFaculty(index) {
+  let faculties = JSON.parse(localStorage.getItem("faculties")) || [];
 
-    let faculty = {
+  let faculty = faculties[index];
 
-        id,
-        name,
-        email,
-        phone,
-        department,
-        designation
+  document.getElementById("facultyId").value = faculty.id;
 
-    };
+  document.getElementById("facultyName").value = faculty.name;
 
-    if (editIndex !== null) {
+  document.getElementById("facultyEmail").value = faculty.email;
 
-        faculties[editIndex] = faculty;
+  document.getElementById("facultyPhone").value = faculty.phone;
 
-        localStorage.removeItem(
-            "facultyEditIndex"
-        );
+  document.getElementById("facultyDepartment").value = faculty.department;
 
-        alert("Faculty Updated");
+  document.getElementById("facultyDesignation").value = faculty.designation;
 
-    } else {
+  localStorage.setItem("facultyEditIndex", index);
+}
 
-        faculties.push(faculty);
+function deleteFaculty(index) {
+  if (confirm("Delete Faculty?")) {
+    let faculties = JSON.parse(localStorage.getItem("faculties")) || [];
 
-        alert("Faculty Added");
+    faculties.splice(index, 1);
 
-    }
-
-    localStorage.setItem(
-        "faculties",
-        JSON.stringify(faculties)
-    );
+    localStorage.setItem("faculties", JSON.stringify(faculties));
 
     displayFaculties();
 
     updateDashboardCounts();
-
-    document
-        .getElementById("facultyForm")
-        .reset();
-}
-
-function displayFaculties() {
-
-    let table =
-        document.getElementById(
-            "facultyTableBody"
-        );
-
-    if (!table) return;
-
-    let faculties =
-        JSON.parse(
-            localStorage.getItem("faculties")
-        ) || [];
-
-    table.innerHTML = "";
-
-    faculties.forEach(function (faculty, index) {
-
-        table.innerHTML += `
-
-        <tr>
-
-            <td>${faculty.id}</td>
-            <td>${faculty.name}</td>
-            <td>${faculty.department}</td>
-            <td>${faculty.designation}</td>
-            <td>${faculty.email}</td>
-
-            <td>
-
-                <button
-                class="btn btn-warning btn-sm"
-                onclick="editFaculty(${index})">
-
-                Edit
-
-                </button>
-
-                <button
-                class="btn btn-danger btn-sm"
-                onclick="deleteFaculty(${index})">
-
-                Delete
-
-                </button>
-
-            </td>
-
-        </tr>
-
-        `;
-    });
-}
-
-function editFaculty(index) {
-
-    let faculties =
-        JSON.parse(
-            localStorage.getItem("faculties")
-        ) || [];
-
-    let faculty =
-        faculties[index];
-
-    document.getElementById("facultyId").value =
-        faculty.id;
-
-    document.getElementById("facultyName").value =
-        faculty.name;
-
-    document.getElementById("facultyEmail").value =
-        faculty.email;
-
-    document.getElementById("facultyPhone").value =
-        faculty.phone;
-
-    document.getElementById("facultyDepartment").value =
-        faculty.department;
-
-    document.getElementById("facultyDesignation").value =
-        faculty.designation;
-
-    localStorage.setItem(
-        "facultyEditIndex",
-        index
-    );
-}
-
-function deleteFaculty(index) {
-
-    if (confirm("Delete Faculty?")) {
-
-        let faculties =
-            JSON.parse(
-                localStorage.getItem("faculties")
-            ) || [];
-
-        faculties.splice(index, 1);
-
-        localStorage.setItem(
-            "faculties",
-            JSON.stringify(faculties)
-        );
-
-        displayFaculties();
-
-        updateDashboardCounts();
-    }
+  }
 }
 
 // ==========================
@@ -453,80 +303,65 @@ function deleteFaculty(index) {
 // ==========================
 
 function addCourse() {
+  let code = document.getElementById("courseCode").value;
+  let name = document.getElementById("courseName").value;
+  let faculty = document.getElementById("courseFaculty").value;
+  let semester = document.getElementById("courseSemester").value;
+  let room = document.getElementById("courseRoom").value;
+  let day = document.getElementById("courseDay").value;
+  let time = document.getElementById("courseTime").value;
 
-    let code = document.getElementById("courseCode").value;
-    let name = document.getElementById("courseName").value;
-    let faculty = document.getElementById("courseFaculty").value;
-    let semester = document.getElementById("courseSemester").value;
-    let room = document.getElementById("courseRoom").value;
-    let day = document.getElementById("courseDay").value;
-    let time = document.getElementById("courseTime").value;
+  if (code === "" || name === "") {
+    alert("Please fill all fields");
+    return;
+  }
 
-    if (code === "" || name === "") {
-        alert("Please fill all fields");
-        return;
-    }
+  let courses = JSON.parse(localStorage.getItem("courses")) || [];
 
-    let courses =
-        JSON.parse(localStorage.getItem("courses")) || [];
+  let editIndex = localStorage.getItem("courseEditIndex");
 
-    let editIndex =
-        localStorage.getItem("courseEditIndex");
+  let course = {
+    code,
+    name,
+    faculty,
+    semester,
+    room,
+    day,
+    time,
+  };
 
-    let course = {
-        code,
-        name,
-        faculty,
-        semester,
-        room,
-        day,
-        time
-    };
+  if (editIndex !== null) {
+    courses[editIndex] = course;
 
-    if (editIndex !== null) {
+    localStorage.removeItem("courseEditIndex");
 
-        courses[editIndex] = course;
+    alert("Course Updated");
+  } else {
+    courses.push(course);
 
-        localStorage.removeItem("courseEditIndex");
+    alert("Course Added");
+  }
 
-        alert("Course Updated");
+  localStorage.setItem("courses", JSON.stringify(courses));
 
-    } else {
+  displayCourses();
 
-        courses.push(course);
+  updateDashboardCounts();
 
-        alert("Course Added");
-
-    }
-
-    localStorage.setItem(
-        "courses",
-        JSON.stringify(courses)
-    );
-
-    displayCourses();
-
-    updateDashboardCounts();
-
-    document.getElementById("courseForm").reset();
+  document.getElementById("courseForm").reset();
 }
 
 function displayCourses() {
+  let table = document.getElementById("courseTableBody");
 
-    let table =
-        document.getElementById("courseTableBody");
+  if (!table) return;
 
-    if (!table) return;
+  let courses = JSON.parse(localStorage.getItem("courses")) || [];
 
-    let courses =
-        JSON.parse(localStorage.getItem("courses"))
-        || [];
+  table.innerHTML = "";
 
-    table.innerHTML = "";
-
-    courses.forEach(function(course, index){
-
-        table.innerHTML += `
+  courses.forEach(function (course, index) {
+    table.innerHTML += `
 
         <tr>
 
@@ -561,160 +396,108 @@ function displayCourses() {
         </tr>
 
         `;
-    });
-
+  });
 }
 
-function editCourse(index){
+function editCourse(index) {
+  let courses = JSON.parse(localStorage.getItem("courses")) || [];
 
-    let courses =
-        JSON.parse(localStorage.getItem("courses"))
-        || [];
+  let course = courses[index];
 
-    let course = courses[index];
+  document.getElementById("courseCode").value = course.code;
 
-    document.getElementById("courseCode").value =
-        course.code;
+  document.getElementById("courseName").value = course.name;
 
-    document.getElementById("courseName").value =
-        course.name;
+  document.getElementById("courseFaculty").value = course.faculty;
 
-    document.getElementById("courseFaculty").value =
-        course.faculty;
+  document.getElementById("courseSemester").value = course.semester;
 
-    document.getElementById("courseSemester").value =
-        course.semester;
+  document.getElementById("courseRoom").value = course.room;
 
-    document.getElementById("courseRoom").value =
-        course.room;
+  document.getElementById("courseDay").value = course.day;
 
-    document.getElementById("courseDay").value =
-        course.day;
+  document.getElementById("courseTime").value = course.time;
 
-    document.getElementById("courseTime").value =
-        course.time;
-
-    localStorage.setItem(
-        "courseEditIndex",
-        index
-    );
+  localStorage.setItem("courseEditIndex", index);
 }
 
-function deleteCourse(index){
+function deleteCourse(index) {
+  if (confirm("Delete Course?")) {
+    let courses = JSON.parse(localStorage.getItem("courses")) || [];
 
-    if(confirm("Delete Course?")){
+    courses.splice(index, 1);
 
-        let courses =
-            JSON.parse(localStorage.getItem("courses"))
-            || [];
+    localStorage.setItem("courses", JSON.stringify(courses));
 
-        courses.splice(index,1);
+    displayCourses();
 
-        localStorage.setItem(
-            "courses",
-            JSON.stringify(courses)
-        );
-
-        displayCourses();
-
-        updateDashboardCounts();
-
-    }
-
+    updateDashboardCounts();
+  }
 }
 
-function searchCourse(){
+function searchCourse() {
+  let input = document.getElementById("courseSearch");
 
-    let input =
-        document.getElementById("courseSearch");
+  if (!input) return;
 
-    if(!input) return;
+  let filter = input.value.toUpperCase();
 
-    let filter =
-        input.value.toUpperCase();
+  let rows = document.querySelectorAll("#courseTableBody tr");
 
-    let rows =
-        document.querySelectorAll(
-            "#courseTableBody tr"
-        );
+  rows.forEach(function (row) {
+    let text = row.innerText.toUpperCase();
 
-    rows.forEach(function(row){
-
-        let text =
-            row.innerText.toUpperCase();
-
-        row.style.display =
-            text.includes(filter)
-            ? ""
-            : "none";
-
-    });
-
+    row.style.display = text.includes(filter) ? "" : "none";
+  });
 }
 // ==========================
 // FEE CRUD
 // ==========================
 
-function addFee(){
+function addFee() {
+  let id = document.getElementById("feeId").value;
 
-    let id =
-        document.getElementById("feeId").value;
+  let name = document.getElementById("feeName").value;
 
-    let name =
-        document.getElementById("feeName").value;
+  let department = document.getElementById("feeDepartment").value;
 
-    let department =
-        document.getElementById("feeDepartment").value;
+  let semester = document.getElementById("feeSemester").value;
 
-    let semester =
-        document.getElementById("feeSemester").value;
+  let amount = document.getElementById("feeAmount").value;
 
-    let amount =
-        document.getElementById("feeAmount").value;
+  let fees = JSON.parse(localStorage.getItem("fees")) || [];
 
-    let fees =
-        JSON.parse(localStorage.getItem("fees"))
-        || [];
+  fees.push({
+    id,
+    name,
+    department,
+    semester,
+    amount,
+    status: "Pending",
+  });
 
-    fees.push({
-        id,
-        name,
-        department,
-        semester,
-        amount,
-        status:"Pending"
-    });
+  localStorage.setItem("fees", JSON.stringify(fees));
 
-    localStorage.setItem(
-        "fees",
-        JSON.stringify(fees)
-    );
+  displayFees();
 
-    displayFees();
+  updateDashboardCounts();
 
-    updateDashboardCounts();
+  document.getElementById("feeForm").reset();
 
-    document.getElementById("feeForm").reset();
-
-    alert("Fee Added");
+  alert("Fee Added");
 }
 
-function displayFees(){
+function displayFees() {
+  let table = document.getElementById("feeTableBody");
 
-    let table =
-        document.getElementById("feeTableBody");
+  if (!table) return;
 
-    if(!table) return;
+  let fees = JSON.parse(localStorage.getItem("fees")) || [];
 
-    let fees =
-        JSON.parse(localStorage.getItem("fees"))
-        || [];
+  table.innerHTML = "";
 
-    table.innerHTML = "";
-
-    fees.forEach(function(fee,index){
-
-        table.innerHTML += `
+  fees.forEach(function (fee, index) {
+    table.innerHTML += `
 
         <tr>
 
@@ -727,11 +510,11 @@ function displayFees(){
         <td>
 
         <span class="badge ${
-            fee.status==="Approved"
+          fee.status === "Approved"
             ? "bg-success"
-            : fee.status==="Rejected"
-            ? "bg-danger"
-            : "bg-warning"
+            : fee.status === "Rejected"
+              ? "bg-danger"
+              : "bg-warning"
         }">
 
         ${fee.status}
@@ -763,164 +546,99 @@ function displayFees(){
         </tr>
 
         `;
-    });
+  });
 }
 
-function approveFee(index){
+function approveFee(index) {
+  let fees = JSON.parse(localStorage.getItem("fees")) || [];
 
-    let fees =
-        JSON.parse(localStorage.getItem("fees"))
-        || [];
+  fees[index].status = "Approved";
 
-    fees[index].status = "Approved";
+  localStorage.setItem("fees", JSON.stringify(fees));
 
-    localStorage.setItem(
-        "fees",
-        JSON.stringify(fees)
-    );
+  displayFees();
 
-    displayFees();
-
-    updateDashboardCounts();
+  updateDashboardCounts();
 }
 
-function rejectFee(index){
+function rejectFee(index) {
+  let fees = JSON.parse(localStorage.getItem("fees")) || [];
 
-    let fees =
-        JSON.parse(localStorage.getItem("fees"))
-        || [];
+  fees[index].status = "Rejected";
 
-    fees[index].status = "Rejected";
+  localStorage.setItem("fees", JSON.stringify(fees));
 
-    localStorage.setItem(
-        "fees",
-        JSON.stringify(fees)
-    );
+  displayFees();
 
-    displayFees();
-
-    updateDashboardCounts();
+  updateDashboardCounts();
 }
 
-function searchFee(){
+function searchFee() {
+  let input = document.getElementById("feeSearch");
 
-    let input =
-        document.getElementById("feeSearch");
+  let filter = input.value.toUpperCase();
 
-    let filter =
-        input.value.toUpperCase();
+  let rows = document.querySelectorAll("#feeTableBody tr");
 
-    let rows =
-        document.querySelectorAll(
-            "#feeTableBody tr"
-        );
+  rows.forEach(function (row) {
+    let text = row.innerText.toUpperCase();
 
-    rows.forEach(function(row){
-
-        let text =
-            row.innerText.toUpperCase();
-
-        row.style.display =
-            text.includes(filter)
-            ? ""
-            : "none";
-
-    });
-
+    row.style.display = text.includes(filter) ? "" : "none";
+  });
 }
 // ==========================
 // GRADE CRUD
 // ==========================
 
 function addGrade() {
+  let studentId = document.getElementById("gradeStudentId").value;
 
-    let studentId =
-        document.getElementById(
-            "gradeStudentId"
-        ).value;
+  let studentName = document.getElementById("gradeStudentName").value;
 
-    let studentName =
-        document.getElementById(
-            "gradeStudentName"
-        ).value;
+  let course = document.getElementById("gradeCourse").value;
 
-    let course =
-        document.getElementById(
-            "gradeCourse"
-        ).value;
+  let semester = document.getElementById("gradeSemester").value;
 
-    let semester =
-        document.getElementById(
-            "gradeSemester"
-        ).value;
+  let grade = document.getElementById("gradeGrade").value;
 
-    let grade =
-        document.getElementById(
-            "gradeGrade"
-        ).value;
+  let cgpa = document.getElementById("gradeCgpa").value;
 
-    let cgpa =
-        document.getElementById(
-            "gradeCgpa"
-        ).value;
+  if (studentId === "" || studentName === "" || course === "") {
+    alert("Fill all fields");
+    return;
+  }
 
-    if (
-        studentId === "" ||
-        studentName === "" ||
-        course === ""
-    ) {
+  let grades = JSON.parse(localStorage.getItem("grades")) || [];
 
-        alert("Fill all fields");
-        return;
-    }
+  grades.push({
+    studentId,
+    studentName,
+    course,
+    semester,
+    grade,
+    cgpa,
+  });
 
-    let grades =
-        JSON.parse(
-            localStorage.getItem("grades")
-        ) || [];
+  localStorage.setItem("grades", JSON.stringify(grades));
 
-    grades.push({
-        studentId,
-        studentName,
-        course,
-        semester,
-        grade,
-        cgpa
-    });
+  displayGrades();
 
-    localStorage.setItem(
-        "grades",
-        JSON.stringify(grades)
-    );
+  document.getElementById("gradeForm").reset();
 
-    displayGrades();
-
-    document
-        .getElementById("gradeForm")
-        .reset();
-
-    alert("Grade Published");
+  alert("Grade Published");
 }
 
 function displayGrades() {
+  let table = document.getElementById("gradeTableBody");
 
-    let table =
-        document.getElementById(
-            "gradeTableBody"
-        );
+  if (!table) return;
 
-    if (!table) return;
+  let grades = JSON.parse(localStorage.getItem("grades")) || [];
 
-    let grades =
-        JSON.parse(
-            localStorage.getItem("grades")
-        ) || [];
+  table.innerHTML = "";
 
-    table.innerHTML = "";
-
-    grades.forEach(function(item,index){
-
-        table.innerHTML += `
+  grades.forEach(function (item, index) {
+    table.innerHTML += `
 
         <tr>
 
@@ -954,232 +672,157 @@ function displayGrades() {
         </tr>
 
         `;
-    });
+  });
 }
 
-function deleteGrade(index){
+function deleteGrade(index) {
+  if (confirm("Delete Grade?")) {
+    let grades = JSON.parse(localStorage.getItem("grades")) || [];
 
-    if(confirm("Delete Grade?")){
+    grades.splice(index, 1);
 
-        let grades =
-            JSON.parse(
-                localStorage.getItem("grades")
-            ) || [];
+    localStorage.setItem("grades", JSON.stringify(grades));
 
-        grades.splice(index,1);
-
-        localStorage.setItem(
-            "grades",
-            JSON.stringify(grades)
-        );
-
-        displayGrades();
-    }
+    displayGrades();
+  }
 }
 
-function searchGrade(){
+function searchGrade() {
+  let input = document.getElementById("gradeSearch");
 
-    let input =
-        document.getElementById(
-            "gradeSearch"
-        );
+  let filter = input.value.toUpperCase();
 
-    let filter =
-        input.value.toUpperCase();
+  let rows = document.querySelectorAll("#gradeTableBody tr");
 
-    let rows =
-        document.querySelectorAll(
-            "#gradeTableBody tr"
-        );
+  rows.forEach(function (row) {
+    let text = row.innerText.toUpperCase();
 
-    rows.forEach(function(row){
-
-        let text =
-            row.innerText.toUpperCase();
-
-        row.style.display =
-            text.includes(filter)
-            ? ""
-            : "none";
-    });
+    row.style.display = text.includes(filter) ? "" : "none";
+  });
 }
 // ==========================
 // REPORTS
 // ==========================
 
-function loadReports(){
+function loadReports() {
+  let students = JSON.parse(localStorage.getItem("students")) || [];
 
-    let students =
-    JSON.parse(localStorage.getItem("students")) || [];
+  let faculties = JSON.parse(localStorage.getItem("faculties")) || [];
 
-    let faculties =
-    JSON.parse(localStorage.getItem("faculties")) || [];
+  let courses = JSON.parse(localStorage.getItem("courses")) || [];
 
-    let courses =
-    JSON.parse(localStorage.getItem("courses")) || [];
+  let fees = JSON.parse(localStorage.getItem("fees")) || [];
 
-    let fees =
-    JSON.parse(localStorage.getItem("fees")) || [];
+  let grades = JSON.parse(localStorage.getItem("grades")) || [];
 
-    let grades =
-    JSON.parse(localStorage.getItem("grades")) || [];
+  let reportStudents = document.getElementById("reportStudents");
 
-    let reportStudents =
-    document.getElementById("reportStudents");
+  let reportFaculty = document.getElementById("reportFaculty");
 
-    let reportFaculty =
-    document.getElementById("reportFaculty");
+  let reportCourses = document.getElementById("reportCourses");
 
-    let reportCourses =
-    document.getElementById("reportCourses");
+  let reportGrades = document.getElementById("reportGrades");
 
-    let reportGrades =
-    document.getElementById("reportGrades");
+  if (reportStudents) reportStudents.innerHTML = students.length;
 
-    if(reportStudents)
-        reportStudents.innerHTML = students.length;
+  if (reportFaculty) reportFaculty.innerHTML = faculties.length;
 
-    if(reportFaculty)
-        reportFaculty.innerHTML = faculties.length;
+  if (reportCourses) reportCourses.innerHTML = courses.length;
 
-    if(reportCourses)
-        reportCourses.innerHTML = courses.length;
+  if (reportGrades) reportGrades.innerHTML = grades.length;
 
-    if(reportGrades)
-        reportGrades.innerHTML = grades.length;
+  let s1 = document.getElementById("summaryStudents");
 
-    let s1 =
-    document.getElementById("summaryStudents");
+  let s2 = document.getElementById("summaryFaculty");
 
-    let s2 =
-    document.getElementById("summaryFaculty");
+  let s3 = document.getElementById("summaryCourses");
 
-    let s3 =
-    document.getElementById("summaryCourses");
+  let s4 = document.getElementById("summaryFees");
 
-    let s4 =
-    document.getElementById("summaryFees");
+  let s5 = document.getElementById("summaryGrades");
 
-    let s5 =
-    document.getElementById("summaryGrades");
-
-    if(s1) s1.innerHTML = students.length;
-    if(s2) s2.innerHTML = faculties.length;
-    if(s3) s3.innerHTML = courses.length;
-    if(s4) s4.innerHTML = fees.length;
-    if(s5) s5.innerHTML = grades.length;
+  if (s1) s1.innerHTML = students.length;
+  if (s2) s2.innerHTML = faculties.length;
+  if (s3) s3.innerHTML = courses.length;
+  if (s4) s4.innerHTML = fees.length;
+  if (s5) s5.innerHTML = grades.length;
 }
 // ==========================
 // SETTINGS
 // ==========================
 
 function saveSettings() {
+  let adminName = document.getElementById("adminName").value;
 
-    let adminName =
-        document.getElementById("adminName").value;
+  let adminPassword = document.getElementById("adminPassword").value;
 
-    let adminPassword =
-        document.getElementById("adminPassword").value;
+  localStorage.setItem("adminName", adminName);
 
-    localStorage.setItem(
-        "adminName",
-        adminName
-    );
+  localStorage.setItem("adminPassword", adminPassword);
 
-    localStorage.setItem(
-        "adminPassword",
-        adminPassword
-    );
-
-    alert("Settings Saved Successfully");
+  alert("Settings Saved Successfully");
 }
 
 function loadSettings() {
+  let adminName = localStorage.getItem("adminName");
 
-    let adminName =
-        localStorage.getItem("adminName");
+  let adminPassword = localStorage.getItem("adminPassword");
 
-    let adminPassword =
-        localStorage.getItem("adminPassword");
+  let nameField = document.getElementById("adminName");
 
-    let nameField =
-        document.getElementById("adminName");
+  let passwordField = document.getElementById("adminPassword");
 
-    let passwordField =
-        document.getElementById("adminPassword");
+  if (nameField) {
+    nameField.value = adminName || "";
+  }
 
-    if (nameField) {
-
-        nameField.value =
-            adminName || "";
-
-    }
-
-    if (passwordField) {
-
-        passwordField.value =
-            adminPassword || "";
-
-    }
+  if (passwordField) {
+    passwordField.value = adminPassword || "";
+  }
 }
 
 function resetSystem() {
+  let result = confirm("Are you sure? All data will be deleted!");
 
-    let result = confirm(
-        "Are you sure? All data will be deleted!"
-    );
+  if (result) {
+    localStorage.clear();
 
-    if (result) {
+    alert("System Reset Successful");
 
-        localStorage.clear();
-
-        alert("System Reset Successful");
-
-        location.reload();
-    }
+    location.reload();
+  }
 }
-
 
 // ==========================
 // GRADES
 // ==========================
 
 function publishGrade() {
-
-    alert(
-        "Semester Grade Published Successfully!"
-    );
+  alert("Semester Grade Published Successfully!");
 }
 // ==========================
 // STUDENT SEARCH
 // ==========================
 
 function searchStudent() {
+  let keyword = document.getElementById("studentSearch").value.toLowerCase();
 
-    let keyword =
-        document.getElementById("studentSearch")
-        .value
-        .toLowerCase();
+  let students = JSON.parse(localStorage.getItem("students")) || [];
 
-    let students =
-        JSON.parse(localStorage.getItem("students"))
-        || [];
+  let table = document.getElementById("studentTableBody");
 
-    let table =
-        document.getElementById("studentTableBody");
+  if (!table) return;
 
-    if (!table) return;
+  table.innerHTML = "";
 
-    table.innerHTML = "";
-
-    students
-        .filter(student =>
-            student.name.toLowerCase().includes(keyword) ||
-            student.id.toLowerCase().includes(keyword)
-        )
-        .forEach((student, index) => {
-
-            table.innerHTML += `
+  students
+    .filter(
+      (student) =>
+        student.name.toLowerCase().includes(keyword) ||
+        student.id.toLowerCase().includes(keyword),
+    )
+    .forEach((student, index) => {
+      table.innerHTML += `
             <tr>
                 <td>${student.id}</td>
                 <td>${student.name}</td>
@@ -1199,7 +842,7 @@ function searchStudent() {
                 </td>
             </tr>
             `;
-        });
+    });
 }
 
 // ==========================
@@ -1207,31 +850,24 @@ function searchStudent() {
 // ==========================
 
 function searchFaculty() {
+  let keyword = document.getElementById("facultySearch").value.toLowerCase();
 
-    let keyword =
-        document.getElementById("facultySearch")
-        .value
-        .toLowerCase();
+  let faculties = JSON.parse(localStorage.getItem("faculties")) || [];
 
-    let faculties =
-        JSON.parse(localStorage.getItem("faculties"))
-        || [];
+  let table = document.getElementById("facultyTableBody");
 
-    let table =
-        document.getElementById("facultyTableBody");
+  if (!table) return;
 
-    if (!table) return;
+  table.innerHTML = "";
 
-    table.innerHTML = "";
-
-    faculties
-        .filter(faculty =>
-            faculty.name.toLowerCase().includes(keyword) ||
-            faculty.id.toLowerCase().includes(keyword)
-        )
-        .forEach((faculty, index) => {
-
-            table.innerHTML += `
+  faculties
+    .filter(
+      (faculty) =>
+        faculty.name.toLowerCase().includes(keyword) ||
+        faculty.id.toLowerCase().includes(keyword),
+    )
+    .forEach((faculty, index) => {
+      table.innerHTML += `
             <tr>
                 <td>${faculty.id}</td>
                 <td>${faculty.name}</td>
@@ -1251,7 +887,7 @@ function searchFaculty() {
                 </td>
             </tr>
             `;
-        });
+    });
 }
 
 // ==========================
@@ -1259,31 +895,24 @@ function searchFaculty() {
 // ==========================
 
 function searchCourse() {
+  let keyword = document.getElementById("courseSearch").value.toLowerCase();
 
-    let keyword =
-        document.getElementById("courseSearch")
-        .value
-        .toLowerCase();
+  let courses = JSON.parse(localStorage.getItem("courses")) || [];
 
-    let courses =
-        JSON.parse(localStorage.getItem("courses"))
-        || [];
+  let table = document.getElementById("courseTableBody");
 
-    let table =
-        document.getElementById("courseTableBody");
+  if (!table) return;
 
-    if (!table) return;
+  table.innerHTML = "";
 
-    table.innerHTML = "";
-
-    courses
-        .filter(course =>
-            course.name.toLowerCase().includes(keyword) ||
-            course.code.toLowerCase().includes(keyword)
-        )
-        .forEach((course, index) => {
-
-            table.innerHTML += `
+  courses
+    .filter(
+      (course) =>
+        course.name.toLowerCase().includes(keyword) ||
+        course.code.toLowerCase().includes(keyword),
+    )
+    .forEach((course, index) => {
+      table.innerHTML += `
             <tr>
                 <td>${course.code}</td>
                 <td>${course.name}</td>
@@ -1305,121 +934,78 @@ function searchCourse() {
                 </td>
             </tr>
             `;
-        });
+    });
 }
 // ==========================
 // LOGIN SYSTEM
 // ==========================
 
 function login() {
+  let username = document.getElementById("username").value;
 
-    let username =
-        document.getElementById("username").value;
+  let password = document.getElementById("password").value;
 
-    let password =
-        document.getElementById("password").value;
+  let savedPassword = localStorage.getItem("adminPassword") || "1234";
 
-    let savedPassword =
-        localStorage.getItem("adminPassword") || "1234";
+  if (username === "admin" && password === savedPassword) {
+    localStorage.setItem("isLoggedIn", "true");
 
-    if (
-        username === "admin" &&
-        password === savedPassword
-    ) {
-
-        localStorage.setItem(
-            "isLoggedIn",
-            "true"
-        );
-
-        window.location.href =
-            "dashboard.html";
-
-    } else {
-
-        alert("Invalid Username or Password");
-
-    }
+    window.location.href = "dashboard.php";
+  } else {
+    alert("Invalid Username or Password");
+  }
 }
 
 function logout() {
+  localStorage.removeItem("isLoggedIn");
 
-    localStorage.removeItem(
-        "isLoggedIn"
-    );
-
-    window.location.href =
-        "index.html";
+  window.location.href = "index.html";
 }
 
 function checkLogin() {
+  if (window.location.pathname.includes("dashboard.php")) {
+    let loginStatus = localStorage.getItem("isLoggedIn");
 
-    if (
-        window.location.pathname.includes(
-            "dashboard.html"
-        )
-    ) {
-
-        let loginStatus =
-            localStorage.getItem(
-                "isLoggedIn"
-            );
-
-        if (
-            loginStatus !== "true"
-        ) {
-
-            window.location.href =
-                "index.html";
-        }
+    if (loginStatus !== "true") {
+      window.location.href = "index.html";
     }
+  }
 }
 
 function loadAdminName() {
+  let adminName = localStorage.getItem("adminName") || "Admin";
 
-    let adminName =
-        localStorage.getItem(
-            "adminName"
-        ) || "Admin";
+  let welcome = document.getElementById("welcomeAdmin");
 
-    let welcome =
-        document.getElementById(
-            "welcomeAdmin"
-        );
-
-    if (welcome) {
-
-        welcome.innerHTML =
-            "Welcome " + adminName;
-    }
+  if (welcome) {
+    welcome.innerHTML = "Welcome " + adminName;
+  }
 }
 
 // ==========================
 // PAGE LOAD
 // ==========================
 
-window.onload = function(){
+window.onload = function () {
+  checkLogin();
 
-    checkLogin();
+  displayStudents();
 
-    displayStudents();
+  displayFaculties();
 
-    displayFaculties();
+  displayCourses();
 
-    displayCourses();
+  displayFees();
 
-    displayFees();
+  displayGrades();
 
-    displayGrades();
+  updateDashboardCounts();
 
-    updateDashboardCounts();
+  updateClock();
 
-    updateClock();
+  loadReports();
 
-    loadReports();
+  loadSettings();
 
-    loadSettings();
-
-    loadAdminName();
-
+  loadAdminName();
 };
