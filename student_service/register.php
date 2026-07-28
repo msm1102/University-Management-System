@@ -1,15 +1,44 @@
+<?php
+require_once 'db.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $data = json_decode(file_get_contents('php://input'), true);
+    
+    if (isset($data['email']) && isset($data['password'])) {
+        $email = filter_var($data['email'], FILTER_SANITIZE_EMAIL);
+        $password = $data['password'];
+
+        if (filter_var($email, FILTER_VALIDATE_EMAIL) && strlen($password) >= 8) {
+            
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+            $sql = "INSERT INTO students (email, password) VALUES (?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ss", $email, $hashed_password);
+
+            if ($stmt->execute()) {
+                echo json_encode(['success' => true]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'এই ইমেইলটি আগে থেকেই নিবন্ধিত অথবা ডাটাবেস এরর।']);
+            }
+            $stmt->close();
+        } else {
+            echo json_encode(['success' => false, 'message' => 'ভুল ইনপুট দেওয়া হয়েছে।']);
+        }
+    }
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Registration App</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen p-4">
 
-    <!-- আপনার জাভাস্ক্রিপ্ট কোডটি এই div-এর ভেতরেই সবকিছু রেন্ডার করবে -->
     <div id="app"></div>
 
     <script>
@@ -21,7 +50,7 @@
                 <h2 class="text-2xl font-bold">
                     Student Registration
                 </h2>
-                <a href="dashboard.html" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 py-1 px-3 rounded border transition">
+                <a href="dashboard.php" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 py-1 px-3 rounded border transition">
                     ← Dashboard
                 </a>
             </div>
@@ -115,22 +144,22 @@
                 strengthBar.style.width = "0%";
                 strengthBar.className = "h-2 bg-red-500 rounded transition-all duration-300";
                 strengthText.innerHTML = "Strength : Empty";
-                strengthText.style.color = "#4b5563"; // gray-600
+                strengthText.style.color = "#4b5563"; 
             } else if (score <= 1) {
                 strengthBar.style.width = "25%";
                 strengthBar.className = "h-2 bg-red-500 rounded transition-all duration-300";
                 strengthText.innerHTML = "Strength : Weak";
-                strengthText.style.color = "#ef4444"; // red-500
+                strengthText.style.color = "#ef4444"; 
             } else if (score <= 3) {
                 strengthBar.style.width = "60%";
                 strengthBar.className = "h-2 bg-yellow-500 rounded transition-all duration-300";
                 strengthText.innerHTML = "Strength : Moderate";
-                strengthText.style.color = "#eab308"; // yellow-500
+                strengthText.style.color = "#eab308"; 
             } else {
                 strengthBar.style.width = "100%";
                 strengthBar.className = "h-2 bg-green-500 rounded transition-all duration-300";
                 strengthText.innerHTML = "Strength : Strong";
-                strengthText.style.color = "#22c55e"; // green-500
+                strengthText.style.color = "#22c55e"; 
             }
         }
 
@@ -153,7 +182,7 @@
 
         const submitBtn = document.getElementById("submitBtn");
 
-        submitBtn.addEventListener("click", function (event) {
+        submitBtn.addEventListener("click", async function (event) {
             event.preventDefault();
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -161,29 +190,59 @@
             const isPasswordStrong = password.value.length >= 8;
 
             if (isEmailValid && isPasswordStrong) {
-                app.innerHTML = `
-                <div class="max-w-md mx-auto mt-20 bg-green-100 border border-green-500 p-8 rounded-lg text-center shadow-lg">
-                    <h2 class="text-3xl font-bold text-green-700">
-                        ✅ Account Created Successfully!
-                    </h2>
-                    <p class="mt-4 text-green-800">
-                        Welcome to the University Management System.
-                    </p>
+                
+                submitBtn.innerHTML = "Processing...";
+                submitBtn.disabled = true;
 
-                    <div class="mt-6 flex justify-center gap-4">
-                        <button
-                            onclick="location.reload()"
-                            class="bg-gray-600 text-white px-5 py-2 rounded hover:bg-gray-700 transition">
-                            Register Another
-                        </button>
-                        <a
-                            href="dashboard.html"
-                            class="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700 inline-block transition">
-                            Go to Dashboard
-                        </a>
-                    </div>
-                </div>
-                `;
+                try {
+                    const response = await fetch('register.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: email.value,
+                            password: password.value
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        app.innerHTML = `
+                        <div class="max-w-md mx-auto mt-20 bg-green-100 border border-green-500 p-8 rounded-lg text-center shadow-lg">
+                            <h2 class="text-3xl font-bold text-green-700">
+                                ✅ Account Created Successfully!
+                            </h2>
+                            <p class="mt-4 text-green-800">
+                                Welcome to the University Management System.
+                            </p>
+
+                            <div class="mt-6 flex justify-center gap-4">
+                                <button
+                                    onclick="location.reload()"
+                                    class="bg-gray-600 text-white px-5 py-2 rounded hover:bg-gray-700 transition">
+                                    Register Another
+                                </button>
+                                <a
+                                    href="login.php"
+                                    class="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700 inline-block transition">
+                                    Go to Login
+                                </a>
+                            </div>
+                        </div>
+                        `;
+                    } else {
+                        alert("Registration Failed: " + result.message);
+                        submitBtn.innerHTML = "Register";
+                        submitBtn.disabled = false;
+                    }
+                } catch (error) {
+                    alert("সার্ভারের সাথে কানেক্ট করতে সমস্যা হচ্ছে।");
+                    submitBtn.innerHTML = "Register";
+                    submitBtn.disabled = false;
+                }
+
             } else {
                 alert("Please enter a valid email and a password with at least 8 characters.");
             }
