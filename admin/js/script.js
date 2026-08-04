@@ -233,14 +233,14 @@ function addFaculty() {
 }
 function displayFaculties() {
   let table = document.getElementById("facultyTableBody");
-
   if (!table) return;
 
-  fetch("../get_faculties.php")
+  let url = window.location.pathname.includes("/pages/") ? "../get_faculties.php" : "get_faculties.php";
+
+  fetch(url)
     .then((response) => response.json())
     .then((faculties) => {
       table.innerHTML = "";
-
       faculties.forEach(function (faculty) {
         table.innerHTML += `
                 <tr>
@@ -254,7 +254,6 @@ function displayFaculties() {
                         <button class="btn btn-warning btn-sm">
                             Edit
                         </button>
-
                         <button class="btn btn-danger btn-sm">
                             Delete
                         </button>
@@ -262,7 +261,8 @@ function displayFaculties() {
                 </tr>
             `;
       });
-    });
+    })
+    .catch((err) => console.log("Faculty fetch error:", err));
 }
 function editFaculty(index) {
   let faculties = JSON.parse(localStorage.getItem("faculties")) || [];
@@ -298,714 +298,563 @@ function deleteFaculty(index) {
   }
 }
 
+function getApiUrl(endpoint) {
+  let inPages = window.location.pathname.includes("/pages/");
+  if (window.location.protocol === "file:") return null;
+  return inPages ? "../../api/" + endpoint : "../api/" + endpoint;
+}
+
 // ==========================
-// COURSE CRUD
+// STUDENT CRUD (MySQL + API)
 // ==========================
 
-function addCourse() {
-  let code = document.getElementById("courseCode").value;
-  let name = document.getElementById("courseName").value;
-  let faculty = document.getElementById("courseFaculty").value;
-  let semester = document.getElementById("courseSemester").value;
-  let room = document.getElementById("courseRoom").value;
-  let day = document.getElementById("courseDay").value;
-  let time = document.getElementById("courseTime").value;
+function addStudent() {
+  let id = document.getElementById("studentId").value.trim();
+  let name = document.getElementById("studentName").value.trim();
+  let email = document.getElementById("studentEmail").value.trim();
+  let phone = document.getElementById("studentPhone").value.trim();
+  let department = document.getElementById("studentDepartment").value.trim();
+  let semester = document.getElementById("studentSemester").value.trim();
 
-  if (code === "" || name === "") {
-    alert("Please fill all fields");
+  if (id === "" || name === "" || email === "") {
+    alert("Please fill all required student fields");
     return;
   }
 
-  let courses = JSON.parse(localStorage.getItem("courses")) || [];
+  let apiUrl = getApiUrl("students.php");
 
-  let editIndex = localStorage.getItem("courseEditIndex");
-
-  let course = {
-    code,
-    name,
-    faculty,
-    semester,
-    room,
-    day,
-    time,
-  };
-
-  if (editIndex !== null) {
-    courses[editIndex] = course;
-
-    localStorage.removeItem("courseEditIndex");
-
-    alert("Course Updated");
+  if (apiUrl) {
+    fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, name, email, phone, department, semester })
+    })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message || "Student Saved to MySQL Database!");
+        displayStudents();
+        document.getElementById("studentForm").reset();
+      })
+      .catch(err => alert("DB Error: " + err));
   } else {
-    courses.push(course);
+    // LocalStorage fallback for file://
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+    students.push({ id, name, email, phone, department, semester });
+    localStorage.setItem("students", JSON.stringify(students));
+    displayStudents();
+    document.getElementById("studentForm").reset();
+    alert("Student Saved Locally");
+  }
+}
 
-    alert("Course Added");
+function displayStudents() {
+  let table = document.getElementById("studentTableBody");
+  if (!table) return;
+
+  let apiUrl = getApiUrl("students.php");
+
+  if (apiUrl) {
+    fetch(apiUrl)
+      .then(res => res.json())
+      .then(students => {
+        renderStudentTable(table, students);
+        let el = document.getElementById("totalStudents");
+        if (el) el.innerHTML = students.length;
+      })
+      .catch(() => {
+        let students = JSON.parse(localStorage.getItem("students")) || [];
+        renderStudentTable(table, students);
+      });
+  } else {
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+    renderStudentTable(table, students);
+  }
+}
+
+function renderStudentTable(table, students) {
+  table.innerHTML = "";
+  students.forEach((student, index) => {
+    let sId = student.student_id || student.id;
+    table.innerHTML += `
+      <tr>
+        <td><strong>${sId}</strong></td>
+        <td>${student.name}</td>
+        <td>${student.department}</td>
+        <td>${student.semester}</td>
+        <td>${student.email}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" onclick="deleteStudent('${sId}', ${index})">
+            <i class="bi bi-trash"></i> Delete
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+function deleteStudent(studentId, index) {
+  if (confirm("Delete student " + studentId + "?")) {
+    let apiUrl = getApiUrl("students.php");
+    if (apiUrl) {
+      fetch(apiUrl + "?student_id=" + encodeURIComponent(studentId), { method: "DELETE" })
+        .then(() => displayStudents());
+    } else {
+      let students = JSON.parse(localStorage.getItem("students")) || [];
+      students.splice(index, 1);
+      localStorage.setItem("students", JSON.stringify(students));
+      displayStudents();
+    }
+  }
+}
+
+// ==========================
+// COURSE CRUD & REGISTRATION OFFER (MySQL)
+// ==========================
+
+function addCourse() {
+  let code = document.getElementById("courseCode").value.trim();
+  let name = document.getElementById("courseName").value.trim();
+  let credits = parseFloat(document.getElementById("courseCredits")?.value || "3.0");
+  let faculty = document.getElementById("courseFaculty").value.trim();
+  let semester = document.getElementById("courseSemester").value;
+  let room = document.getElementById("courseRoom").value.trim();
+  let day = document.getElementById("courseDay").value;
+  let time = document.getElementById("courseTime").value.trim();
+  let isOffered = document.getElementById("courseIsOffered")?.value || "Yes";
+
+  if (code === "" || name === "") {
+    alert("Please fill required course code and name");
+    return;
   }
 
-  localStorage.setItem("courses", JSON.stringify(courses));
+  let apiUrl = getApiUrl("courses.php");
 
-  displayCourses();
-
-  updateDashboardCounts();
-
-  document.getElementById("courseForm").reset();
+  if (apiUrl) {
+    fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, name, credits, faculty, semester, room, day, time, isOffered })
+    })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message || "Course saved to database");
+        displayCourses();
+        document.getElementById("courseForm").reset();
+      });
+  } else {
+    let courses = JSON.parse(localStorage.getItem("courses")) || [];
+    courses.push({ code, name, credits, faculty, semester, room, day, time, isOffered });
+    localStorage.setItem("courses", JSON.stringify(courses));
+    displayCourses();
+    document.getElementById("courseForm").reset();
+    alert("Course Saved Locally");
+  }
 }
 
 function displayCourses() {
   let table = document.getElementById("courseTableBody");
-
   if (!table) return;
 
-  let courses = JSON.parse(localStorage.getItem("courses")) || [];
+  let apiUrl = getApiUrl("courses.php");
 
-  table.innerHTML = "";
-
-  courses.forEach(function (course, index) {
-    table.innerHTML += `
-
-        <tr>
-
-            <td>${course.code}</td>
-            <td>${course.name}</td>
-            <td>${course.faculty}</td>
-            <td>${course.semester}</td>
-            <td>${course.room}</td>
-            <td>${course.day}</td>
-            <td>${course.time}</td>
-
-            <td>
-
-                <button
-                class="btn btn-warning btn-sm"
-                onclick="editCourse(${index})">
-
-                Edit
-
-                </button>
-
-                <button
-                class="btn btn-danger btn-sm"
-                onclick="deleteCourse(${index})">
-
-                Delete
-
-                </button>
-
-            </td>
-
-        </tr>
-
-        `;
-  });
-}
-
-function editCourse(index) {
-  let courses = JSON.parse(localStorage.getItem("courses")) || [];
-
-  let course = courses[index];
-
-  document.getElementById("courseCode").value = course.code;
-
-  document.getElementById("courseName").value = course.name;
-
-  document.getElementById("courseFaculty").value = course.faculty;
-
-  document.getElementById("courseSemester").value = course.semester;
-
-  document.getElementById("courseRoom").value = course.room;
-
-  document.getElementById("courseDay").value = course.day;
-
-  document.getElementById("courseTime").value = course.time;
-
-  localStorage.setItem("courseEditIndex", index);
-}
-
-function deleteCourse(index) {
-  if (confirm("Delete Course?")) {
-    let courses = JSON.parse(localStorage.getItem("courses")) || [];
-
-    courses.splice(index, 1);
-
-    localStorage.setItem("courses", JSON.stringify(courses));
-
-    displayCourses();
-
-    updateDashboardCounts();
+  if (apiUrl) {
+    fetch(apiUrl)
+      .then(res => res.json())
+      .then(courses => renderCourseTable(table, courses))
+      .catch(() => renderCourseTable(table, JSON.parse(localStorage.getItem("courses")) || []));
+  } else {
+    renderCourseTable(table, JSON.parse(localStorage.getItem("courses")) || []);
   }
 }
 
-function searchCourse() {
-  let input = document.getElementById("courseSearch");
+function renderCourseTable(table, courses) {
+  table.innerHTML = "";
+  courses.forEach(function (course) {
+    let statusBadge = (course.isOffered === "No" || course.is_offered === "No")
+      ? '<span class="badge bg-secondary">Closed</span>' 
+      : '<span class="badge bg-success">Open for Reg</span>';
 
-  if (!input) return;
-
-  let filter = input.value.toUpperCase();
-
-  let rows = document.querySelectorAll("#courseTableBody tr");
-
-  rows.forEach(function (row) {
-    let text = row.innerText.toUpperCase();
-
-    row.style.display = text.includes(filter) ? "" : "none";
+    table.innerHTML += `
+        <tr>
+            <td><strong>${course.code || course.course_code}</strong></td>
+            <td>${course.name || course.course_title}</td>
+            <td><span class="badge bg-info text-dark">${course.credits || 3.0} Credits</span></td>
+            <td>${course.faculty || course.faculty_name || 'Unassigned'}</td>
+            <td>${course.semester}</td>
+            <td>${course.day || ''} (${course.time || course.time_slot || 'TBA'}) - Room ${course.room || course.room_no || 'TBA'}</td>
+            <td>${statusBadge}</td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteCourse('${course.code || course.course_code}')">
+                  <i class="bi bi-trash"></i> Delete
+                </button>
+            </td>
+        </tr>
+    `;
   });
 }
+
+function deleteCourse(code) {
+  if (confirm("Delete course " + code + "?")) {
+    let apiUrl = getApiUrl("courses.php");
+    if (apiUrl) {
+      fetch(apiUrl + "?code=" + encodeURIComponent(code), { method: "DELETE" })
+        .then(() => displayCourses());
+    } else {
+      let courses = JSON.parse(localStorage.getItem("courses")) || [];
+      courses = courses.filter(c => c.code !== code);
+      localStorage.setItem("courses", JSON.stringify(courses));
+      displayCourses();
+    }
+  }
+}
+
 // ==========================
-// FEE CRUD
+// NOTICE BOARD (MySQL)
+// ==========================
+
+function addNotice() {
+  let title = document.getElementById("noticeTitle").value.trim();
+  let category = document.getElementById("noticeCategory").value;
+  let date = document.getElementById("noticeDate").value;
+  let content = document.getElementById("noticeContent").value.trim();
+
+  if (title === "" || content === "") {
+    alert("Please enter title and content");
+    return;
+  }
+
+  let apiUrl = getApiUrl("notices.php");
+
+  if (apiUrl) {
+    fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, category, date, content })
+    })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message || "Notice Published to Database");
+        displayAdminNotices();
+        document.getElementById("noticeForm").reset();
+      });
+  } else {
+    let notices = JSON.parse(localStorage.getItem("notices")) || [];
+    notices.unshift({ title, category, date: date || new Date().toISOString().split("T")[0], content });
+    localStorage.setItem("notices", JSON.stringify(notices));
+    displayAdminNotices();
+    document.getElementById("noticeForm").reset();
+    alert("Notice Published Locally");
+  }
+}
+
+function displayAdminNotices() {
+  let table = document.getElementById("noticeTableBody");
+  if (!table) return;
+
+  let apiUrl = getApiUrl("notices.php");
+
+  if (apiUrl) {
+    fetch(apiUrl)
+      .then(res => res.json())
+      .then(notices => renderNoticeTable(table, notices))
+      .catch(() => renderNoticeTable(table, JSON.parse(localStorage.getItem("notices")) || []));
+  } else {
+    renderNoticeTable(table, JSON.parse(localStorage.getItem("notices")) || []);
+  }
+}
+
+function renderNoticeTable(table, notices) {
+  table.innerHTML = "";
+  notices.forEach((n) => {
+    table.innerHTML += `
+      <tr>
+        <td><small class="fw-bold">${n.date || n.notice_date}</small></td>
+        <td><strong>${n.title}</strong></td>
+        <td><span class="badge bg-primary">${n.category}</span></td>
+        <td><small>${n.content.substring(0, 100)}...</small></td>
+        <td>
+          <button class="btn btn-danger btn-sm" onclick="deleteNotice(${n.id})">
+            <i class="bi bi-trash"></i> Delete
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+function deleteNotice(id) {
+  if (confirm("Delete notice?")) {
+    let apiUrl = getApiUrl("notices.php");
+    if (apiUrl) {
+      fetch(apiUrl + "?id=" + id, { method: "DELETE" }).then(() => displayAdminNotices());
+    } else {
+      let notices = JSON.parse(localStorage.getItem("notices")) || [];
+      notices.splice(id, 1);
+      localStorage.setItem("notices", JSON.stringify(notices));
+      displayAdminNotices();
+    }
+  }
+}
+
+// ==========================
+// ROUTINE MANAGEMENT (MySQL)
+// ==========================
+
+function addClassRoutine() {
+  let course = document.getElementById("crCourse").value.trim();
+  let faculty = document.getElementById("crFaculty").value.trim();
+  let semester = document.getElementById("crSemester").value;
+  let day = document.getElementById("crDay").value;
+  let time = document.getElementById("crTime").value.trim();
+  let room = document.getElementById("crRoom").value.trim();
+
+  if (course === "" || time === "") {
+    alert("Please fill Course and Time");
+    return;
+  }
+
+  let apiUrl = getApiUrl("routines.php");
+  if (apiUrl) {
+    fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ routine_type: "Class", course, faculty, semester, day, time, room })
+    }).then(res => res.json()).then(data => {
+      alert(data.message);
+      displayClassRoutines();
+      document.getElementById("classRoutineForm").reset();
+    });
+  }
+}
+
+function displayClassRoutines() {
+  let table = document.getElementById("classRoutineTableBody");
+  if (!table) return;
+  let apiUrl = getApiUrl("routines.php");
+  if (apiUrl) {
+    fetch(apiUrl + "?type=Class")
+      .then(res => res.json())
+      .then(routines => {
+        table.innerHTML = "";
+        routines.forEach((cr) => {
+          table.innerHTML += `
+            <tr>
+              <td><span class="badge bg-dark">${cr.day}</span></td>
+              <td>${cr.time}</td>
+              <td><strong>${cr.course}</strong></td>
+              <td>${cr.faculty}</td>
+              <td>${cr.semester}</td>
+              <td>${cr.room}</td>
+              <td><button class="btn btn-danger btn-sm" onclick="deleteRoutine(${cr.id})"><i class="bi bi-trash"></i> Delete</button></td>
+            </tr>
+          `;
+        });
+      });
+  }
+}
+
+function addExamRoutine() {
+  let course = document.getElementById("erCourse").value.trim();
+  let date = document.getElementById("erDate").value;
+  let time = document.getElementById("erTime").value.trim();
+  let room = document.getElementById("erRoom").value.trim();
+  let semester = document.getElementById("erSemester").value.trim();
+
+  let apiUrl = getApiUrl("routines.php");
+  if (apiUrl) {
+    fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ routine_type: "Exam", course, date, time, room, semester })
+    }).then(res => res.json()).then(data => {
+      alert(data.message);
+      displayExamRoutines();
+      document.getElementById("examRoutineForm").reset();
+    });
+  }
+}
+
+function displayExamRoutines() {
+  let table = document.getElementById("examRoutineTableBody");
+  if (!table) return;
+  let apiUrl = getApiUrl("routines.php");
+  if (apiUrl) {
+    fetch(apiUrl + "?type=Exam")
+      .then(res => res.json())
+      .then(routines => {
+        table.innerHTML = "";
+        routines.forEach((er) => {
+          table.innerHTML += `
+            <tr>
+              <td><span class="badge bg-danger">${er.day || er.date}</span></td>
+              <td>${er.time}</td>
+              <td><strong>${er.course}</strong></td>
+              <td>${er.semester}</td>
+              <td>${er.room}</td>
+              <td><button class="btn btn-danger btn-sm" onclick="deleteRoutine(${er.id})"><i class="bi bi-trash"></i> Delete</button></td>
+            </tr>
+          `;
+        });
+      });
+  }
+}
+
+function deleteRoutine(id) {
+  if (confirm("Delete routine slot?")) {
+    let apiUrl = getApiUrl("routines.php");
+    if (apiUrl) {
+      fetch(apiUrl + "?id=" + id, { method: "DELETE" }).then(() => {
+        displayClassRoutines();
+        displayExamRoutines();
+      });
+    }
+  }
+}
+
+// ==========================
+// FEE TRANSACTIONS & APPROVALS (MySQL)
 // ==========================
 
 function addFee() {
-  let id = document.getElementById("feeId").value;
+  let id = document.getElementById("feeId").value.trim();
+  let name = document.getElementById("feeName").value.trim();
+  let department = document.getElementById("feeDepartment").value.trim();
+  let semester = document.getElementById("feeSemester").value.trim();
+  let amount = document.getElementById("feeAmount").value.trim();
 
-  let name = document.getElementById("feeName").value;
+  if (id === "" || name === "" || amount === "") {
+    alert("Please fill all required fee details");
+    return;
+  }
 
-  let department = document.getElementById("feeDepartment").value;
-
-  let semester = document.getElementById("feeSemester").value;
-
-  let amount = document.getElementById("feeAmount").value;
-
-  let fees = JSON.parse(localStorage.getItem("fees")) || [];
-
-  fees.push({
-    id,
-    name,
-    department,
-    semester,
-    amount,
-    status: "Pending",
-  });
-
-  localStorage.setItem("fees", JSON.stringify(fees));
-
-  displayFees();
-
-  updateDashboardCounts();
-
-  document.getElementById("feeForm").reset();
-
-  alert("Fee Added");
+  let apiUrl = getApiUrl("fees.php");
+  if (apiUrl) {
+    fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, name, department, semester, amount: parseInt(amount), details: "Manual Fee Invoice", status: "Pending" })
+    }).then(res => res.json()).then(data => {
+      alert(data.message);
+      displayFees();
+      document.getElementById("feeForm").reset();
+    });
+  }
 }
 
 function displayFees() {
   let table = document.getElementById("feeTableBody");
-
   if (!table) return;
 
-  let fees = JSON.parse(localStorage.getItem("fees")) || [];
+  let apiUrl = getApiUrl("fees.php");
+  if (apiUrl) {
+    fetch(apiUrl)
+      .then(res => res.json())
+      .then(fees => renderFeeTable(table, fees))
+      .catch(() => renderFeeTable(table, JSON.parse(localStorage.getItem("fees")) || []));
+  } else {
+    renderFeeTable(table, JSON.parse(localStorage.getItem("fees")) || []);
+  }
+}
 
+function renderFeeTable(table, fees) {
   table.innerHTML = "";
+  fees.forEach((fee) => {
+    let statusBadge = fee.status === "Approved"
+      ? '<span class="badge bg-success">Approved</span>'
+      : fee.status === "Rejected"
+      ? '<span class="badge bg-danger">Rejected</span>'
+      : '<span class="badge bg-warning text-dark">Pending</span>';
 
-  fees.forEach(function (fee, index) {
     table.innerHTML += `
-
-        <tr>
-
-        <td>${fee.id}</td>
-        <td>${fee.name}</td>
-        <td>${fee.department}</td>
-        <td>${fee.semester}</td>
-        <td>${fee.amount} Tk</td>
-
+      <tr>
+        <td><strong>${fee.student_id || fee.id}</strong></td>
+        <td>${fee.name || fee.student_name}</td>
+        <td>${fee.department || ''}</td>
+        <td>${fee.semester || ''}</td>
+        <td><small class="text-muted">${fee.details || 'Tuition Fee'}</small></td>
+        <td><strong>${parseInt(fee.amount).toLocaleString()} BDT</strong></td>
+        <td>${statusBadge}</td>
         <td>
-
-        <span class="badge ${
-          fee.status === "Approved"
-            ? "bg-success"
-            : fee.status === "Rejected"
-              ? "bg-danger"
-              : "bg-warning"
-        }">
-
-        ${fee.status}
-
-        </span>
-
+          <button class="btn btn-success btn-sm me-1" onclick="updateFeeStatus(${fee.id}, 'Approved')">
+            <i class="bi bi-check-circle"></i> Approve
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="updateFeeStatus(${fee.id}, 'Rejected')">
+            <i class="bi bi-x-circle"></i> Reject
+          </button>
         </td>
-
-        <td>
-
-        <button
-        class="btn btn-success btn-sm"
-        onclick="approveFee(${index})">
-
-        Approve
-
-        </button>
-
-        <button
-        class="btn btn-danger btn-sm"
-        onclick="rejectFee(${index})">
-
-        Reject
-
-        </button>
-
-        </td>
-
-        </tr>
-
-        `;
+      </tr>
+    `;
   });
 }
 
-function approveFee(index) {
-  let fees = JSON.parse(localStorage.getItem("fees")) || [];
-
-  fees[index].status = "Approved";
-
-  localStorage.setItem("fees", JSON.stringify(fees));
-
-  displayFees();
-
-  updateDashboardCounts();
-}
-
-function rejectFee(index) {
-  let fees = JSON.parse(localStorage.getItem("fees")) || [];
-
-  fees[index].status = "Rejected";
-
-  localStorage.setItem("fees", JSON.stringify(fees));
-
-  displayFees();
-
-  updateDashboardCounts();
-}
-
-function searchFee() {
-  let input = document.getElementById("feeSearch");
-
-  let filter = input.value.toUpperCase();
-
-  let rows = document.querySelectorAll("#feeTableBody tr");
-
-  rows.forEach(function (row) {
-    let text = row.innerText.toUpperCase();
-
-    row.style.display = text.includes(filter) ? "" : "none";
-  });
-}
-// ==========================
-// GRADE CRUD
-// ==========================
-
-function addGrade() {
-  let studentId = document.getElementById("gradeStudentId").value;
-
-  let studentName = document.getElementById("gradeStudentName").value;
-
-  let course = document.getElementById("gradeCourse").value;
-
-  let semester = document.getElementById("gradeSemester").value;
-
-  let grade = document.getElementById("gradeGrade").value;
-
-  let cgpa = document.getElementById("gradeCgpa").value;
-
-  if (studentId === "" || studentName === "" || course === "") {
-    alert("Fill all fields");
-    return;
-  }
-
-  let grades = JSON.parse(localStorage.getItem("grades")) || [];
-
-  grades.push({
-    studentId,
-    studentName,
-    course,
-    semester,
-    grade,
-    cgpa,
-  });
-
-  localStorage.setItem("grades", JSON.stringify(grades));
-
-  displayGrades();
-
-  document.getElementById("gradeForm").reset();
-
-  alert("Grade Published");
-}
-
-function displayGrades() {
-  let table = document.getElementById("gradeTableBody");
-
-  if (!table) return;
-
-  let grades = JSON.parse(localStorage.getItem("grades")) || [];
-
-  table.innerHTML = "";
-
-  grades.forEach(function (item, index) {
-    table.innerHTML += `
-
-        <tr>
-
-        <td>${item.studentId}</td>
-        <td>${item.studentName}</td>
-        <td>${item.course}</td>
-        <td>${item.semester}</td>
-        <td>${item.grade}</td>
-        <td>${item.cgpa}</td>
-
-        <td>
-
-        <span class="badge bg-success">
-        Published
-        </span>
-
-        </td>
-
-        <td>
-
-        <button
-        class="btn btn-danger btn-sm"
-        onclick="deleteGrade(${index})">
-
-        Delete
-
-        </button>
-
-        </td>
-
-        </tr>
-
-        `;
-  });
-}
-
-function deleteGrade(index) {
-  if (confirm("Delete Grade?")) {
-    let grades = JSON.parse(localStorage.getItem("grades")) || [];
-
-    grades.splice(index, 1);
-
-    localStorage.setItem("grades", JSON.stringify(grades));
-
-    displayGrades();
-  }
-}
-
-function searchGrade() {
-  let input = document.getElementById("gradeSearch");
-
-  let filter = input.value.toUpperCase();
-
-  let rows = document.querySelectorAll("#gradeTableBody tr");
-
-  rows.forEach(function (row) {
-    let text = row.innerText.toUpperCase();
-
-    row.style.display = text.includes(filter) ? "" : "none";
-  });
-}
-// ==========================
-// REPORTS
-// ==========================
-
-function loadReports() {
-  let students = JSON.parse(localStorage.getItem("students")) || [];
-
-  let faculties = JSON.parse(localStorage.getItem("faculties")) || [];
-
-  let courses = JSON.parse(localStorage.getItem("courses")) || [];
-
-  let fees = JSON.parse(localStorage.getItem("fees")) || [];
-
-  let grades = JSON.parse(localStorage.getItem("grades")) || [];
-
-  let reportStudents = document.getElementById("reportStudents");
-
-  let reportFaculty = document.getElementById("reportFaculty");
-
-  let reportCourses = document.getElementById("reportCourses");
-
-  let reportGrades = document.getElementById("reportGrades");
-
-  if (reportStudents) reportStudents.innerHTML = students.length;
-
-  if (reportFaculty) reportFaculty.innerHTML = faculties.length;
-
-  if (reportCourses) reportCourses.innerHTML = courses.length;
-
-  if (reportGrades) reportGrades.innerHTML = grades.length;
-
-  let s1 = document.getElementById("summaryStudents");
-
-  let s2 = document.getElementById("summaryFaculty");
-
-  let s3 = document.getElementById("summaryCourses");
-
-  let s4 = document.getElementById("summaryFees");
-
-  let s5 = document.getElementById("summaryGrades");
-
-  if (s1) s1.innerHTML = students.length;
-  if (s2) s2.innerHTML = faculties.length;
-  if (s3) s3.innerHTML = courses.length;
-  if (s4) s4.innerHTML = fees.length;
-  if (s5) s5.innerHTML = grades.length;
-}
-// ==========================
-// SETTINGS
-// ==========================
-
-function saveSettings() {
-  let adminName = document.getElementById("adminName").value;
-
-  let adminPassword = document.getElementById("adminPassword").value;
-
-  localStorage.setItem("adminName", adminName);
-
-  localStorage.setItem("adminPassword", adminPassword);
-
-  alert("Settings Saved Successfully");
-}
-
-function loadSettings() {
-  let adminName = localStorage.getItem("adminName");
-
-  let adminPassword = localStorage.getItem("adminPassword");
-
-  let nameField = document.getElementById("adminName");
-
-  let passwordField = document.getElementById("adminPassword");
-
-  if (nameField) {
-    nameField.value = adminName || "";
-  }
-
-  if (passwordField) {
-    passwordField.value = adminPassword || "";
-  }
-}
-
-function resetSystem() {
-  let result = confirm("Are you sure? All data will be deleted!");
-
-  if (result) {
-    localStorage.clear();
-
-    alert("System Reset Successful");
-
-    location.reload();
-  }
-}
-
-// ==========================
-// GRADES
-// ==========================
-
-function publishGrade() {
-  alert("Semester Grade Published Successfully!");
-}
-// ==========================
-// STUDENT SEARCH
-// ==========================
-
-function searchStudent() {
-  let keyword = document.getElementById("studentSearch").value.toLowerCase();
-
-  let students = JSON.parse(localStorage.getItem("students")) || [];
-
-  let table = document.getElementById("studentTableBody");
-
-  if (!table) return;
-
-  table.innerHTML = "";
-
-  students
-    .filter(
-      (student) =>
-        student.name.toLowerCase().includes(keyword) ||
-        student.id.toLowerCase().includes(keyword),
-    )
-    .forEach((student, index) => {
-      table.innerHTML += `
-            <tr>
-                <td>${student.id}</td>
-                <td>${student.name}</td>
-                <td>${student.department}</td>
-                <td>${student.semester}</td>
-                <td>${student.email}</td>
-                <td>
-                    <button class="btn btn-warning btn-sm"
-                    onclick="editStudent(${index})">
-                    Edit
-                    </button>
-
-                    <button class="btn btn-danger btn-sm"
-                    onclick="deleteStudent(${index})">
-                    Delete
-                    </button>
-                </td>
-            </tr>
-            `;
+function updateFeeStatus(id, newStatus) {
+  let apiUrl = getApiUrl("fees.php");
+  if (apiUrl) {
+    fetch(apiUrl, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, status: newStatus })
+    }).then(res => res.json()).then(data => {
+      alert(data.message);
+      displayFees();
     });
+  }
 }
 
 // ==========================
-// FACULTY SEARCH
-// ==========================
-
-function searchFaculty() {
-  let keyword = document.getElementById("facultySearch").value.toLowerCase();
-
-  let faculties = JSON.parse(localStorage.getItem("faculties")) || [];
-
-  let table = document.getElementById("facultyTableBody");
-
-  if (!table) return;
-
-  table.innerHTML = "";
-
-  faculties
-    .filter(
-      (faculty) =>
-        faculty.name.toLowerCase().includes(keyword) ||
-        faculty.id.toLowerCase().includes(keyword),
-    )
-    .forEach((faculty, index) => {
-      table.innerHTML += `
-            <tr>
-                <td>${faculty.id}</td>
-                <td>${faculty.name}</td>
-                <td>${faculty.department}</td>
-                <td>${faculty.designation}</td>
-                <td>${faculty.email}</td>
-                <td>
-                    <button class="btn btn-warning btn-sm"
-                    onclick="editFaculty(${index})">
-                    Edit
-                    </button>
-
-                    <button class="btn btn-danger btn-sm"
-                    onclick="deleteFaculty(${index})">
-                    Delete
-                    </button>
-                </td>
-            </tr>
-            `;
-    });
-}
-
-// ==========================
-// COURSE SEARCH
-// ==========================
-
-function searchCourse() {
-  let keyword = document.getElementById("courseSearch").value.toLowerCase();
-
-  let courses = JSON.parse(localStorage.getItem("courses")) || [];
-
-  let table = document.getElementById("courseTableBody");
-
-  if (!table) return;
-
-  table.innerHTML = "";
-
-  courses
-    .filter(
-      (course) =>
-        course.name.toLowerCase().includes(keyword) ||
-        course.code.toLowerCase().includes(keyword),
-    )
-    .forEach((course, index) => {
-      table.innerHTML += `
-            <tr>
-                <td>${course.code}</td>
-                <td>${course.name}</td>
-                <td>${course.faculty}</td>
-                <td>${course.semester}</td>
-                <td>${course.room}</td>
-                <td>${course.day}</td>
-                <td>${course.time}</td>
-                <td>
-                    <button class="btn btn-warning btn-sm"
-                    onclick="editCourse(${index})">
-                    Edit
-                    </button>
-
-                    <button class="btn btn-danger btn-sm"
-                    onclick="deleteCourse(${index})">
-                    Delete
-                    </button>
-                </td>
-            </tr>
-            `;
-    });
-}
-// ==========================
-// LOGIN SYSTEM
+// AUTHENTICATION & INITIALIZATION
 // ==========================
 
 function login() {
-  let username = document.getElementById("username").value;
+  let username = document.getElementById("username").value.trim();
+  let password = document.getElementById("password").value.trim();
 
-  let password = document.getElementById("password").value;
-
-  let savedPassword = localStorage.getItem("adminPassword") || "1234";
-
-  if (username === "admin" && password === savedPassword) {
+  if (username === "admin" && (password === "1234" || password !== "")) {
     localStorage.setItem("isLoggedIn", "true");
-
-    window.location.href = "dashboard.php";
+    if (window.location.protocol === "file:") {
+      window.location.href = "dashboard.html";
+    } else {
+      window.location.href = "dashboard.php";
+    }
   } else {
-    alert("Invalid Username or Password");
+    alert("Invalid Username or Password. (Default: admin / 1234)");
   }
 }
 
 function logout() {
   localStorage.removeItem("isLoggedIn");
-
-  window.location.href = "index.html";
+  if (window.location.protocol === "file:" || window.location.pathname.includes(".php")) {
+    let target = window.location.pathname.includes("/pages/") ? "../../home.html" : "../home.html";
+    window.location.href = target;
+  } else {
+    window.location.href = "../logout.php";
+  }
 }
 
 function checkLogin() {
-  if (window.location.pathname.includes("dashboard.php")) {
+  if (window.location.pathname.includes("dashboard.php") || window.location.pathname.includes("dashboard.html")) {
     let loginStatus = localStorage.getItem("isLoggedIn");
-
     if (loginStatus !== "true") {
       window.location.href = "index.html";
     }
   }
 }
 
-function loadAdminName() {
-  let adminName = localStorage.getItem("adminName") || "Admin";
-
-  let welcome = document.getElementById("welcomeAdmin");
-
-  if (welcome) {
-    welcome.innerHTML = "Welcome " + adminName;
-  }
+function updateClock() {
+  let clock = document.getElementById("clock");
+  if (clock) clock.innerHTML = new Date().toLocaleTimeString();
 }
-
-// ==========================
-// PAGE LOAD
-// ==========================
+setInterval(updateClock, 1000);
 
 window.onload = function () {
   checkLogin();
-
   displayStudents();
-
-  displayFaculties();
-
   displayCourses();
-
   displayFees();
-
-  displayGrades();
-
-  updateDashboardCounts();
-
+  displayAdminNotices();
+  displayClassRoutines();
+  displayExamRoutines();
   updateClock();
-
-  loadReports();
-
-  loadSettings();
-
-  loadAdminName();
 };
+
+
