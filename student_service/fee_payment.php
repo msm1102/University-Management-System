@@ -3,35 +3,6 @@ include_once __DIR__ . "/auth_check.php";
 include_once __DIR__ . "/db.php";
 
 $student_id = $_SESSION['student_id'];
-<<<<<<< HEAD
-$success = "";
-$error = "";
-
-// 3NF Insert Handler (Omits student_name & department)
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $amount  = intval($_POST['amount'] ?? 0);
-    $method  = trim($_POST['method'] ?? 'bKash Mobile Banking');
-    $trx_id  = trim($_POST['trx_id'] ?? '');
-    $details = $method . " - TrxID: " . $trx_id;
-    $status  = 'Pending';
-
-    if ($amount > 0 && !empty($trx_id)) {
-        // 3NF Prepared Statement (only inserting student_id, amount, details, status)
-        $stmt = mysqli_prepare($conn, "INSERT INTO fee_transactions (student_id, amount, details, status) VALUES (?, ?, ?, ?)");
-        mysqli_stmt_bind_param($stmt, "siss", $student_id, $amount, $details, $status);
-
-        if (mysqli_stmt_execute($stmt)) {
-            $success = "Payment deposit submitted successfully! Awaiting admin approval.";
-        } else {
-            $error = "Failed to submit payment deposit: " . mysqli_error($conn);
-        }
-        mysqli_stmt_close($stmt);
-    } else {
-        $error = "Please fill in a valid amount and Transaction ID.";
-    }
-}
-=======
->>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -61,11 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .form-group label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; }
         .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
         .btn-submit { width: 100%; padding: 12px; background: #16a34a; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
-<<<<<<< HEAD
-        .alert-success { background: #dcfce7; color: #15803d; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; }
-        .alert-error { background: #fee2e2; color: #991b1b; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; }
-=======
->>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
     </style>
 </head>
 <body>
@@ -84,26 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="main">
     <div class="navbar">
-<<<<<<< HEAD
-        <h3><i class="fa-solid fa-wallet me-2" style="color: #16a34a;"></i>Credit-Based Tuition Fee & Payment Center (3NF)</h3>
-=======
         <h3><i class="fa-solid fa-wallet me-2" style="color: #16a34a;"></i>Credit-Based Tuition Fee & Payment Center</h3>
->>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
         <div>
             <span style="font-weight: 600; color: #1e3a8a; background: #e0f2fe; padding: 6px 14px; border-radius: 20px; font-size: 13px;">Rate Standard: 3,000 BDT / Credit</span>
         </div>
     </div>
 
-<<<<<<< HEAD
-    <?php if (!empty($success)): ?>
-        <div class="alert-success"><i class="fa-solid fa-circle-check me-1"></i> <?php echo htmlspecialchars($success); ?></div>
-    <?php endif; ?>
-    <?php if (!empty($error)): ?>
-        <div class="alert-error"><i class="fa-solid fa-circle-exclamation me-1"></i> <?php echo htmlspecialchars($error); ?></div>
-    <?php endif; ?>
-
-=======
->>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
     <div class="grid-2">
         <!-- Tuition Breakdown Card -->
         <div class="card">
@@ -116,15 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
 
-<<<<<<< HEAD
-        <!-- Submit Payment Receipt Card (3NF INSERT Handler) -->
-        <div class="card">
-            <h3 style="font-size: 18px; color: #166534; margin-bottom: 15px;"><i class="fa-solid fa-money-bill-transfer me-2"></i>Deposit Payment Receipt (3NF)</h3>
-            <form action="fee_payment.php" method="POST">
-                <div class="form-group">
-                    <label>Payment Method</label>
-                    <select name="method">
-=======
         <!-- Submit Payment Receipt Card -->
         <div class="card">
             <h3 style="font-size: 18px; color: #166534; margin-bottom: 15px;"><i class="fa-solid fa-money-bill-transfer me-2"></i>Deposit Payment Receipt</h3>
@@ -132,7 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-group">
                     <label>Payment Method</label>
                     <select id="payMethod">
->>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
                         <option value="bKash Mobile Banking">bKash Mobile Banking</option>
                         <option value="Nagad Mobile Banking">Nagad Mobile Banking</option>
                         <option value="Bank Online Transfer">Bank Online Transfer</option>
@@ -141,19 +83,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="form-group">
                     <label>Transaction ID / Deposit Slip No.</label>
-<<<<<<< HEAD
-                    <input type="text" name="trx_id" placeholder="e.g. BK789XYZ12" required>
-                </div>
-                <div class="form-group">
-                    <label>Amount (BDT)</label>
-                    <input type="number" name="amount" placeholder="e.g. 27000" required>
-=======
                     <input type="text" id="payTrxId" placeholder="e.g. BK789XYZ12" required>
                 </div>
                 <div class="form-group">
                     <label>Amount (BDT)</label>
                     <input type="number" id="payAmount" placeholder="e.g. 27000" required>
->>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
                 </div>
                 <button type="submit" class="btn-submit"><i class="fa-solid fa-paper-plane me-1"></i> Submit Payment Receipt for Admin Approval</button>
             </form>

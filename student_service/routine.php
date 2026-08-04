@@ -1,47 +1,6 @@
 <?php
 include_once __DIR__ . "/auth_check.php";
 include_once __DIR__ . "/db.php";
-<<<<<<< HEAD
-
-// 3NF SELECT Query joining courses & faculty
-$class_routine_sql = "SELECT 
-                          r.id, 
-                          r.routine_type, 
-                          r.course_code, 
-                          c.course_title, 
-                          r.faculty_id, 
-                          f.name AS faculty_name, 
-                          r.semester, 
-                          r.day_or_date AS day, 
-                          r.time_slot AS time, 
-                          r.room_no AS room 
-                      FROM routines r
-                      INNER JOIN courses c ON r.course_code = c.course_code
-                      LEFT JOIN faculty f ON r.faculty_id = f.faculty_id
-                      WHERE r.routine_type = 'Class'
-                      ORDER BY r.id DESC";
-
-$exam_routine_sql = "SELECT 
-                         r.id, 
-                         r.routine_type, 
-                         r.course_code, 
-                         c.course_title, 
-                         r.faculty_id, 
-                         f.name AS faculty_name, 
-                         r.semester, 
-                         r.day_or_date AS date, 
-                         r.time_slot AS time, 
-                         r.room_no AS room 
-                     FROM routines r
-                     INNER JOIN courses c ON r.course_code = c.course_code
-                     LEFT JOIN faculty f ON r.faculty_id = f.faculty_id
-                     WHERE r.routine_type = 'Exam'
-                     ORDER BY r.id DESC";
-
-$class_result = mysqli_query($conn, $class_routine_sql);
-$exam_result = mysqli_query($conn, $exam_routine_sql);
-=======
->>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -84,13 +43,8 @@ $exam_result = mysqli_query($conn, $exam_routine_sql);
 
 <div class="main">
     <div class="navbar">
-<<<<<<< HEAD
-        <h3><i class="fa-solid fa-clock me-2" style="color: #0284c7;"></i>Class Timetable & Examination Schedule (3NF)</h3>
-        <span style="font-weight: 600; color: #64748b; font-size: 13px;">Live Published Routines (JOINs)</span>
-=======
         <h3><i class="fa-solid fa-clock me-2" style="color: #0284c7;"></i>Class Timetable & Examination Schedule</h3>
         <span style="font-weight: 600; color: #64748b; font-size: 13px;">Live Published Routines</span>
->>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
     </div>
 
     <!-- Class Routine -->
@@ -101,35 +55,13 @@ $exam_result = mysqli_query($conn, $exam_routine_sql);
                 <tr>
                     <th>Day</th>
                     <th>Time Slot</th>
-<<<<<<< HEAD
-                    <th>Course Code & Title</th>
-                    <th>Faculty Name</th>
-=======
                     <th>Course</th>
                     <th>Faculty</th>
->>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
                     <th>Semester</th>
                     <th>Room</th>
                 </tr>
             </thead>
-<<<<<<< HEAD
-            <tbody id="studentClassRoutineTbody">
-                <?php if ($class_result && mysqli_num_rows($class_result) > 0): ?>
-                    <?php while ($row = mysqli_fetch_assoc($class_result)): ?>
-                        <tr style="border-bottom: 1px solid #f1f5f9;">
-                            <td style="padding: 12px;"><span style="background: #1e293b; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;"><?php echo htmlspecialchars($row['day']); ?></span></td>
-                            <td style="padding: 12px;"><?php echo htmlspecialchars($row['time']); ?></td>
-                            <td style="padding: 12px;"><strong><?php echo htmlspecialchars($row['course_code']) . " - " . htmlspecialchars($row['course_title']); ?></strong></td>
-                            <td style="padding: 12px;"><?php echo htmlspecialchars($row['faculty_name'] ?? 'TBA'); ?></td>
-                            <td style="padding: 12px;"><?php echo htmlspecialchars($row['semester']); ?></td>
-                            <td style="padding: 12px;"><?php echo htmlspecialchars($row['room']); ?></td>
-                        </tr>
-                    <?php endwhile; ?>
-                <?php endif; ?>
-            </tbody>
-=======
             <tbody id="studentClassRoutineTbody"></tbody>
->>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
         </table>
     </div>
 
@@ -141,32 +73,12 @@ $exam_result = mysqli_query($conn, $exam_routine_sql);
                 <tr>
                     <th>Date</th>
                     <th>Time Slot</th>
-<<<<<<< HEAD
-                    <th>Course Code & Title</th>
-=======
                     <th>Course</th>
->>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
                     <th>Semester</th>
                     <th>Exam Hall / Room</th>
                 </tr>
             </thead>
-<<<<<<< HEAD
-            <tbody id="studentExamRoutineTbody">
-                <?php if ($exam_result && mysqli_num_rows($exam_result) > 0): ?>
-                    <?php while ($row = mysqli_fetch_assoc($exam_result)): ?>
-                        <tr style="border-bottom: 1px solid #f1f5f9;">
-                            <td style="padding: 12px;"><span style="background: #fee2e2; color: #b91c1c; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 13px;"><?php echo htmlspecialchars($row['date']); ?></span></td>
-                            <td style="padding: 12px;"><?php echo htmlspecialchars($row['time']); ?></td>
-                            <td style="padding: 12px;"><strong><?php echo htmlspecialchars($row['course_code']) . " - " . htmlspecialchars($row['course_title']); ?></strong></td>
-                            <td style="padding: 12px;"><?php echo htmlspecialchars($row['semester']); ?></td>
-                            <td style="padding: 12px;"><?php echo htmlspecialchars($row['room']); ?></td>
-                        </tr>
-                    <?php endwhile; ?>
-                <?php endif; ?>
-            </tbody>
-=======
             <tbody id="studentExamRoutineTbody"></tbody>
->>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
         </table>
     </div>
 </div>
