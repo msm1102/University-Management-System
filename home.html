@@ -16,9 +16,9 @@
       <div class="logo">University Management System</div>
 
       <nav class="navbar">
-        <a href="#">Home</a>
-        <a href="student_service/login.html">Student Login</a>
-        <a href="admin/index.html">Admin Login</a>
+        <a href="home.html">Home</a>
+        <a href="student_service/login.php">Student Login</a>
+        <a href="admin/index.php">Admin Login</a>
         <a href="#about">About University</a>
         <a href="#contact">Contact</a>
       </nav>
@@ -30,33 +30,18 @@
       <div class="hero-overlay"></div>
     </section>
 
-    <!-- ================= LATEST NEWS ================= -->
+    <!-- ================= LATEST NEWS & NOTICES ================= -->
 
     <section class="latest-news">
-      <h2>Latest News & Notices</h2>
+      <h2>Latest News & Official Notices</h2>
 
-      <div class="news-container">
-        <div class="news-card">
-          <h3>Admission Notice</h3>
-          <p>University admission application is now open.</p>
-          <a href="#">Read More</a>
-        </div>
-
-        <div class="news-card">
-          <h3>Exam Schedule</h3>
-          <p>Check the latest examination schedule and updates.</p>
-          <a href="#">Read More</a>
-        </div>
-
-        <div class="news-card">
-          <h3>Result Published</h3>
-          <p>Semester results have been published.</p>
-          <a href="#">Read More</a>
-        </div>
+      <div class="news-container" id="homeNoticesContainer">
+        <!-- Dynamic JS Notices -->
       </div>
     </section>
 
     <!-- ================= UNIVERSITY SERVICES ================= -->
+
 
     <section class="services">
       <h2>University Services</h2>
@@ -341,5 +326,36 @@
         © 2026 University Management System. All Rights Reserved.
       </div>
     </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        let container = document.getElementById("homeNoticesContainer");
+        if (!container) return;
+
+        function renderNotices(notices) {
+          container.innerHTML = "";
+          notices.slice(0, 6).forEach((n) => {
+            container.innerHTML += `
+              <div class="news-card">
+                <h3>${n.title}</h3>
+                <p><small style="color: #64748b; font-size: 12px; display: block; margin-bottom: 5px;">📅 ${n.date || n.notice_date} | ${n.category}</small>${n.content}</p>
+                <a href="student_service/notice.html">Read Full Notice</a>
+              </div>
+            `;
+          });
+        }
+
+        if (window.location.protocol !== "file:") {
+          fetch("get_home_notices.php")
+            .then(res => res.json())
+            .then(data => renderNotices(data))
+            .catch(() => renderNotices(JSON.parse(localStorage.getItem("notices")) || []));
+        } else {
+          renderNotices(JSON.parse(localStorage.getItem("notices")) || []);
+        }
+      });
+    </script>
   </body>
 </html>
+
+

@@ -1,6 +1,7 @@
 <?php
 include_once __DIR__ . "/auth_check.php";
 include_once __DIR__ . "/db.php";
+<<<<<<< HEAD
 
 // 3NF SELECT Query joining courses & faculty
 $class_routine_sql = "SELECT 
@@ -39,6 +40,8 @@ $exam_routine_sql = "SELECT
 
 $class_result = mysqli_query($conn, $class_routine_sql);
 $exam_result = mysqli_query($conn, $exam_routine_sql);
+=======
+>>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -81,8 +84,13 @@ $exam_result = mysqli_query($conn, $exam_routine_sql);
 
 <div class="main">
     <div class="navbar">
+<<<<<<< HEAD
         <h3><i class="fa-solid fa-clock me-2" style="color: #0284c7;"></i>Class Timetable & Examination Schedule (3NF)</h3>
         <span style="font-weight: 600; color: #64748b; font-size: 13px;">Live Published Routines (JOINs)</span>
+=======
+        <h3><i class="fa-solid fa-clock me-2" style="color: #0284c7;"></i>Class Timetable & Examination Schedule</h3>
+        <span style="font-weight: 600; color: #64748b; font-size: 13px;">Live Published Routines</span>
+>>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
     </div>
 
     <!-- Class Routine -->
@@ -93,12 +101,18 @@ $exam_result = mysqli_query($conn, $exam_routine_sql);
                 <tr>
                     <th>Day</th>
                     <th>Time Slot</th>
+<<<<<<< HEAD
                     <th>Course Code & Title</th>
                     <th>Faculty Name</th>
+=======
+                    <th>Course</th>
+                    <th>Faculty</th>
+>>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
                     <th>Semester</th>
                     <th>Room</th>
                 </tr>
             </thead>
+<<<<<<< HEAD
             <tbody id="studentClassRoutineTbody">
                 <?php if ($class_result && mysqli_num_rows($class_result) > 0): ?>
                     <?php while ($row = mysqli_fetch_assoc($class_result)): ?>
@@ -113,6 +127,9 @@ $exam_result = mysqli_query($conn, $exam_routine_sql);
                     <?php endwhile; ?>
                 <?php endif; ?>
             </tbody>
+=======
+            <tbody id="studentClassRoutineTbody"></tbody>
+>>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
         </table>
     </div>
 
@@ -124,11 +141,16 @@ $exam_result = mysqli_query($conn, $exam_routine_sql);
                 <tr>
                     <th>Date</th>
                     <th>Time Slot</th>
+<<<<<<< HEAD
                     <th>Course Code & Title</th>
+=======
+                    <th>Course</th>
+>>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
                     <th>Semester</th>
                     <th>Exam Hall / Room</th>
                 </tr>
             </thead>
+<<<<<<< HEAD
             <tbody id="studentExamRoutineTbody">
                 <?php if ($exam_result && mysqli_num_rows($exam_result) > 0): ?>
                     <?php while ($row = mysqli_fetch_assoc($exam_result)): ?>
@@ -142,6 +164,9 @@ $exam_result = mysqli_query($conn, $exam_routine_sql);
                     <?php endwhile; ?>
                 <?php endif; ?>
             </tbody>
+=======
+            <tbody id="studentExamRoutineTbody"></tbody>
+>>>>>>> d72d020c473b37966240849aa30820cc0e4111ce
         </table>
     </div>
 </div>
